@@ -1,9 +1,9 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { AboutComponent } from "@/components/sections/AboutComponent";
+import { PageBanner } from "@/components/ui/PageBanner";
 import { ServicesSection } from "@/components/sections/ServicesSection";
-import { WhyChooseUs } from "@/components/sections/WhyChooseUs";
-import { BottomBanner } from "@/components/sections/BottomBanner";
+import { AdditionalServicesSection } from "@/components/sections/AdditionalServicesSection";
+import { VideoBanner } from "@/components/sections/VideoBanner";
 import { ScheduleAppointment } from "@/components/appointment/ScheduleAppointment";
 
 export const metadata = {
@@ -15,11 +15,11 @@ export default function ServicesPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
-      <main className="flex-1 pt-16">
-        <AboutComponent />
+      <main className="flex-1">
+        <PageBanner title="Our Services" breadcrumb="Services" bgImage="/images/banner/banner1.jpg" />
         <ServicesSection />
-        <WhyChooseUs />
-        <BottomBanner />
+        <AdditionalServicesSection />
+        <VideoBanner />
         <ScheduleAppointment />
       </main>
       <Footer />
