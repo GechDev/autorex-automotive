@@ -23,7 +23,7 @@ export function ScheduleAppointment() {
               <Phone className="w-6 h-6 text-white" />
               <div>
                 <div className="text-sm text-white/60 uppercase tracking-wider">Call Now</div>
-                <div className="text-2xl font-heading font-bold">{business.phoneDisplay}</div>
+                <div className="text-2xl font-heading font-bold whitespace-nowrap">{business.phoneDisplay}</div>
               </div>
             </div>
             <Link

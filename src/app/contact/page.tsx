@@ -3,7 +3,7 @@
 import React from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { AboutComponent } from "@/components/sections/AboutComponent";
+import { PageBanner } from "@/components/ui/PageBanner";
 import { ScheduleAppointment } from "@/components/appointment/ScheduleAppointment";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,8 +51,8 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
-      <main className="flex-1 pt-16">
-        <AboutComponent />
+      <main className="flex-1">
+        <PageBanner title="Contact Us" breadcrumb="Contact Us" bgImage="/images/banner/banner1.jpg" />
 
         <section className="contact-section py-[70px] bg-white">
           <div className="auto-container">
