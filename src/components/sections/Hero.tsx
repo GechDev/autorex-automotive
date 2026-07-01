@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Play, ChevronRight } from "lucide-react";
+import { business } from "@/lib/config/business";
 
 export function Hero() {
   return (
@@ -45,7 +46,7 @@ export function Hero() {
       <div className="auto-container relative z-10 py-20">
         <div className="text-center">
           <h5 className="text-white font-heading font-bold uppercase tracking-wider mb-4 text-lg">
-            Working since 1999
+            Working since {business.founded}
           </h5>
           <h2 className="text-white font-heading font-black text-[75px] leading-[70px] mb-8 max-w-3xl mx-auto">
             Tuneup Your Car <br /> to Next Level

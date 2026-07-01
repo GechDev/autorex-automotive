@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Play, ChevronRight } from "lucide-react";
+import { business } from "@/lib/config/business";
 
 export function BottomBanner() {
   return (
@@ -38,7 +39,7 @@ export function BottomBanner() {
       <div className="auto-container relative z-10">
         <div className="text-center max-w-3xl mx-auto">
           <h5 className="text-white font-heading font-bold uppercase tracking-wider mb-4 text-lg">
-            Working since 1992
+            Working since {business.founded}
           </h5>
           <h2 className="text-white font-heading font-black text-[48px] leading-[58px] mb-8">
             We are leader <br /> in Car Mechanical Work

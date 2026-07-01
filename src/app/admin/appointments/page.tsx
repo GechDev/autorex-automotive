@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { format } from "date-fns";
 
 export default async function AdminAppointmentsPage() {
   const appointments = await prisma.appointment.findMany({

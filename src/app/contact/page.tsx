@@ -235,14 +235,14 @@ export default function ContactPage() {
                   {/* Google Map */}
                   <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3071.2910802067827!2d90.45905169331171!3d23.691532202989123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1577214205224!5m2!1sen!2sbd"
+                      src={business.map}
                       width="600"
                       height="450"
                       style={{ border: 0, width: "100%", height: "100%" }}
                       allowFullScreen
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
-                      title="AutoRex Automotive Location"
+                      title={`${business.shortName} Location`}
                     ></iframe>
                   </div>
                 </div>
