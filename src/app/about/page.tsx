@@ -6,9 +6,11 @@ import { WhyChooseUs } from "@/components/sections/WhyChooseUs";
 import { BottomBanner } from "@/components/sections/BottomBanner";
 import { ScheduleAppointment } from "@/components/appointment/ScheduleAppointment";
 
+import { business } from "@/lib/config/business";
+
 export const metadata = {
   title: "About Us | AutoRex Automotive",
-  description: "Learn about AutoRex Automotive - 24 years of professional automotive service and repair experience.",
+  description: `Learn about AutoRex Automotive - ${business.yearsExperience} years of professional automotive service and repair experience.`,
 };
 
 export default function AboutPage() {

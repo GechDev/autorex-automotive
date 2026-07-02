@@ -61,7 +61,7 @@ export default function AppointmentPage() {
                   Schedule Your Appointment
                 </h2>
                 <p className="text-lg text-gray-600">
-                  Fill out the form below to request an appointment. We'll get back to you to confirm.
+                  Fill out the form below to request an appointment. We will get back to you to confirm.
                 </p>
               </div>
 

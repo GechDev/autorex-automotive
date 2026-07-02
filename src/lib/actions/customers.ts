@@ -20,7 +20,7 @@ export async function createCustomer(
 ): Promise<{ success: boolean; error?: string }> {
   const parsed = customerSchema.safeParse(data);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.errors[0].message };
+    return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
   }
   try {
     await prisma.customer.create({ data: parsed.data });

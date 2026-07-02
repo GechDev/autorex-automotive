@@ -20,7 +20,7 @@ export async function createEmployee(
 ): Promise<{ success: boolean; error?: string }> {
   const parsed = employeeSchema.safeParse(data);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.errors[0].message };
+    return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
   }
   if (!parsed.data.password) {
     return { success: false, error: "Password is required for new employees" };

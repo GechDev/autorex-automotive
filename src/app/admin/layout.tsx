@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { 
   LayoutDashboard, 
@@ -15,9 +14,9 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
-  if (!session || !["ADMIN", "MANAGER"].includes(session.user?.role as string)) {
+  if (!session || !["ADMIN", "MANAGER", "EMPLOYEE"].includes(session.user?.role as string)) {
     redirect("/");
   }
 

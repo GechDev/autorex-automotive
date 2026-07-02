@@ -7,6 +7,8 @@ import { Menu, X, Globe, MessageCircle, Send } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
+import { business } from "@/lib/config/business";
+
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Us" },
@@ -41,10 +43,10 @@ export function Header() {
           <div className="flex items-center justify-between h-[48px]">
             <div className="flex items-center">
               <div className="bg-primary px-[35px] py-[12px] text-white text-sm font-medium">
-                Enjoy the Beso while we fix your car
+                {business.topbarMessage}
               </div>
               <div className="ml-[35px] text-white text-sm">
-                Monday - Saturday 7:00AM - 6:00PM
+                {business.hours.weekdays}
               </div>
             </div>
             <div className="flex items-center">
@@ -56,7 +58,7 @@ export function Header() {
                 </div>
               ) : (
                 <div className="text-white text-lg font-medium">
-                  Schedule Appointment: <strong className="text-xl font-bold ml-2">1800 456 7890</strong>
+                  Schedule Appointment: <strong className="text-xl font-bold ml-2">{business.phoneDisplay}</strong>
                 </div>
               )}
             </div>

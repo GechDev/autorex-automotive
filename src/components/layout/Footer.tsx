@@ -2,13 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Mail, Phone, Globe, MessageCircle, Send } from "lucide-react";
 
+import { business } from "@/lib/config/business";
+
 const businessInfo = {
-  name: "AutoRex Automotive",
-  shortName: "AutoRex",
-  address: "54B, Tailstoi Town 5238 MT, La city, IA 522364",
-  email: "contact@autorex.com",
-  phone: "+1 800 456 7890",
-  hours: "Monday - Saturday 7:00AM - 6:00PM",
+  name: business.name,
+  shortName: business.shortName,
+  address: business.address.full,
+  email: business.email,
+  phone: business.phone,
+  hours: business.hours.weekdays,
 };
 
 const footerLinks = {

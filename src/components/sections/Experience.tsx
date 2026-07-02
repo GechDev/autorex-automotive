@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { business } from "@/lib/config/business";
 
 export function Experience() {
   return (
@@ -38,7 +39,7 @@ export function Experience() {
               className="absolute bottom-8 left-8 bg-primary text-white px-6 py-5 rounded text-center shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
               style={{ transform: "rotate(-2deg)" }}
             >
-              <div className="font-heading font-black text-5xl leading-none">24</div>
+              <div className="font-heading font-black text-5xl leading-none">{business.yearsExperience}</div>
               <div className="font-medium text-sm uppercase tracking-wider mt-1">years</div>
               <div className="font-medium text-sm uppercase tracking-wider">Experience</div>
             </div>
@@ -51,7 +52,7 @@ export function Experience() {
                 Welcome to Our workshop
               </h5>
               <h2 className="font-heading font-black text-[36px] leading-[45px] text-[#001659] mb-6">
-                We have 24 years experience
+                We have {business.yearsExperience} years experience
               </h2>
               <div className="text-body max-w-xl">
                 <p className="mb-4">

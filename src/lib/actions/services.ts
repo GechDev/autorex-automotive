@@ -20,7 +20,7 @@ export async function createService(
 ): Promise<{ success: boolean; error?: string }> {
   const parsed = serviceSchema.safeParse(data);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.errors[0].message };
+    return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
   }
   try {
     await prisma.service.create({ data: parsed.data });
@@ -57,6 +57,7 @@ export async function toggleServiceActive(
     revalidatePath("/admin/services");
     return { success: true };
   } catch (error) {
+    console.error("Failed to toggle service:", error);
     return { success: false, error: "Failed to update service" };
   }
 }
