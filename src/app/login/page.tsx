@@ -1,8 +1,7 @@
 import React from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "./LoginForm";
 
 export const metadata = {
   title: "Login | AutoRex Automotive",
@@ -25,32 +24,7 @@ export default function LoginPage() {
               </h1>
             </div>
 
-            <form className="space-y-6">
-              <div>
-                <Input 
-                  type="email" 
-                  placeholder="Email" 
-                  className="w-full h-14 px-4 text-base border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400"
-                />
-              </div>
-              
-              <div>
-                <Input 
-                  type="password" 
-                  placeholder="Password" 
-                  className="w-full h-14 px-4 text-base border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400"
-                />
-              </div>
-
-              <div className="pt-2">
-                <Button 
-                  type="submit" 
-                  className="bg-primary hover:bg-[#c90a07] text-white px-12 py-7 rounded-none font-bold text-base uppercase tracking-wider"
-                >
-                  Login
-                </Button>
-              </div>
-            </form>
+            <LoginForm />
 
           </div>
         </div>
