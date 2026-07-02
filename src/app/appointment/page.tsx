@@ -52,7 +52,7 @@ export default function AppointmentPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
-      <main className="flex-1 pt-16">
+      <main className="flex-1">
         <section className="py-[70px] bg-white">
           <div className="auto-container max-w-4xl mx-auto">
             <div className="bg-white p-8 md:p-10 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-gray-100">
