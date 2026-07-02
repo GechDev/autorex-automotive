@@ -1,0 +1,122 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary: #ee0d09;
+  --color-primary-foreground: #ffffff;
+  --color-header-top: #08194a;
+  --color-secondary: #f4f4f4;
+  --color-secondary-foreground: #222222;
+  --color-dark: #001659;
+  --color-dark-foreground: #ffffff;
+  --color-muted: #797979;
+  --color-border: #e0dcdc;
+  --color-input: #e0dcdc;
+  --color-ring: #ee0d09;
+  --font-sans: var(--font-yantramanav);
+  --font-heading: var(--font-poppins);
+  --radius: 0rem;
+  --container: 1200px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+    outline-color: var(--color-ring);
+  }
+  body {
+    background-color: #ffffff;
+    color: #171717;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--color-dark);
+  }
+  a {
+    transition: color 300ms ease;
+  }
+  .text-body {
+    color: var(--color-muted);
+    font-size: 18px;
+    line-height: 1.44;
+  }
+}
+
+@layer components {
+  .btn-style-one {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 500ms ease;
+    position: relative;
+    overflow: hidden;
+    font-size: 16px;
+    line-height: 24px;
+    color: #fff;
+    padding: 12px 30px;
+    background-color: var(--color-primary);
+  }
+  .btn-style-one::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #000;
+    opacity: 0;
+    transition: all 500ms ease;
+  }
+  .btn-style-one:hover::before {
+    width: 100%;
+    opacity: 0.1;
+  }
+  .btn-style-one span {
+    position: relative;
+  }
+  .auto-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  .section-padding {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+  .sec-title {
+    margin-bottom: 30px;
+  }
+  .sec-title h2 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    display: inline-block;
+    position: relative;
+  }
+  .sec-title h2::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -10px;
+    height: 2px;
+    width: 80px;
+    background-color: var(--color-primary);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+}
