@@ -110,9 +110,9 @@ export function Header() {
           <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="hidden md:flex text-gray-900 hover:text-primary font-bold text-sm items-center gap-1"
+              className="hidden md:flex bg-[#ff0000] hover:bg-[#cc0000] text-white px-8 py-3 rounded-none font-bold text-sm uppercase tracking-wider items-center transition-colors"
             >
-              Login
+              LOGIN
             </Link>
 
             <Link
@@ -152,10 +152,10 @@ export function Header() {
               <div className="pt-4 border-t border-gray-100 flex flex-col gap-4">
                 <Link
                   href="/login"
-                  className="block font-bold text-base text-gray-900"
+                  className="bg-[#ff0000] hover:bg-[#cc0000] text-white px-6 py-3 rounded-none font-bold text-sm w-full flex justify-center items-center uppercase tracking-wider transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Login
+                  LOGIN
                 </Link>
                 <Link
                   href="/appointment"
