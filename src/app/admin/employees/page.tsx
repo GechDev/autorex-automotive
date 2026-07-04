@@ -41,10 +41,10 @@ export default async function AdminEmployeesPage() {
             {employees.map((e, i) => (
               <tr key={e.id} className={`hover:bg-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}`}>
                 <td className="px-6 py-4 text-gray-600">Yes</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{e.firstName}</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{e.lastName}</td>
+                <td className="px-6 py-4 font-bold text-gray-900">{e.name?.split(' ')[0] || "Unknown"}</td>
+                <td className="px-6 py-4 font-bold text-gray-900">{e.name?.split(' ').slice(1).join(' ') || ""}</td>
                 <td className="px-6 py-4 text-gray-600">{e.email}</td>
-                <td className="px-6 py-4 text-gray-600">{e.phone || "N/A"}</td>
+                <td className="px-6 py-4 text-gray-600">{"N/A"}</td>
                 <td className="px-6 py-4 text-gray-600">
                   {new Date(e.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, ' - ')} | {new Date(e.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
                 </td>
