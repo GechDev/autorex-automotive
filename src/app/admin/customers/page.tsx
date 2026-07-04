@@ -4,8 +4,11 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminCustomersPage() {
-  const customers = await prisma.customer.findMany({
-    orderBy: { createdAt: "desc" },
+  const customers = await prisma.customerIdentifier.findMany({
+    include: {
+      info: true
+    },
+    orderBy: { customer_added_date: "desc" },
   });
 
   return (
@@ -45,22 +48,22 @@ export default async function AdminCustomersPage() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {customers.map((c, i) => (
-              <tr key={c.id} className={`hover:bg-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}`}>
-                <td className="px-6 py-4 font-bold text-gray-900">{c.id.substring(0, 4)}</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{c.firstName}</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{c.lastName}</td>
-                <td className="px-6 py-4 text-gray-600">{c.email}</td>
-                <td className="px-6 py-4 text-gray-600">{c.phone}</td>
+              <tr key={c.customer_id} className={`hover:bg-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}`}>
+                <td className="px-6 py-4 font-bold text-gray-900">{c.customer_id}</td>
+                <td className="px-6 py-4 font-bold text-gray-900">{c.info?.customer_first_name || ""}</td>
+                <td className="px-6 py-4 font-bold text-gray-900">{c.info?.customer_last_name || ""}</td>
+                <td className="px-6 py-4 text-gray-600">{c.customer_email}</td>
+                <td className="px-6 py-4 text-gray-600">{c.customer_phone_number}</td>
                 <td className="px-6 py-4 text-gray-600">
-                  {new Date(c.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, ' - ')} | {new Date(c.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  {new Date(c.customer_added_date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, ' - ')} | {new Date(c.customer_added_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
                 </td>
-                <td className="px-6 py-4 text-gray-600">Yes</td>
+                <td className="px-6 py-4 text-gray-600">{c.info?.active_customer_status === 1 ? 'Yes' : 'No'}</td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
-                    <Link href={`/admin/customers/${c.id}/edit`} className="text-gray-900 hover:text-primary transition-colors">
+                    <Link href={`/admin/customers/${c.customer_id}/edit`} className="text-gray-900 hover:text-primary transition-colors">
                       <Edit className="w-4 h-4" />
                     </Link>
-                    <Link href={`/admin/customers/${c.id}`} className="text-gray-900 hover:text-primary transition-colors">
+                    <Link href={`/admin/customers/${c.customer_id}`} className="text-gray-900 hover:text-primary transition-colors">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                     </Link>
                   </div>

@@ -69,6 +69,7 @@ model CommonService {
   service_description String? @db.Text
 
   order_services OrderService[]
+  appointments   Appointment[]
 
   @@map("common_services")
 }
@@ -176,4 +177,23 @@ model OrderStatus {
   order Order @relation(fields: [order_id], references: [order_id])
 
   @@map("order_status")
+}
+
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  customerName  String
+  email         String
+  phone         String
+  vehicleInfo   String?
+  serviceId     Int?
+  preferredDate String
+  preferredTime String
+  message       String?  @db.Text
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  service       CommonService? @relation(fields: [serviceId], references: [service_id])
+
+  @@map("appointments")
 }

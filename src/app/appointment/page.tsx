@@ -42,10 +42,10 @@ export default function AppointmentPage() {
     setSubmitResult(null);
     const result = await createAppointment(data);
     if (result.success) {
-      setSubmitResult({ success: true, message: result.message });
+      setSubmitResult({ success: true, message: result.message || "Success" });
       reset();
     } else {
-      setSubmitResult({ success: false, message: result.error });
+      setSubmitResult({ success: false, message: result.error || "An error occurred" });
     }
   };
 
