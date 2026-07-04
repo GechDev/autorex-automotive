@@ -2,19 +2,21 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
+import { requireRole } from "@/lib/auth-utils";
+import { UserRole } from "@/generated/prisma/enums";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
-  // For design purposes, we allow access without auth if auth is disabled or not configured
-  // In a real app we'd keep this protection:
-  // if (!session || !["ADMIN", "MANAGER", "EMPLOYEE"].includes(session.user?.role as string)) {
-  //   redirect("/");
-  // }
+  try {
+    // Verify authentication and role
+    await requireRole([UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE]);
+  } catch (error) {
+    // If not authenticated or wrong role, redirect to login
+    redirect("/login");
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-foreground">
