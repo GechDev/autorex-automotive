@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { Menu, X, Phone, Mail, Clock } from "lucide-react";
 import { business } from "@/lib/config/business";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,8 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -108,12 +111,32 @@ export function Header() {
 
           {/* Book Now Button & Mobile Toggle */}
           <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="hidden md:flex bg-[#ff0000] hover:bg-[#cc0000] text-white px-8 py-3 rounded-none font-bold text-sm uppercase tracking-wider items-center transition-colors"
-            >
-              LOGIN
-            </Link>
+            {status === "authenticated" ? (
+              <>
+                <Link
+                  href="/admin"
+                  className="hidden md:flex text-gray-900 hover:text-primary font-bold text-sm tracking-wide transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={async () => {
+                    await signOut({ redirect: false });
+                    router.push("/");
+                  }}
+                  className="hidden md:flex bg-gray-900 hover:bg-black text-white px-8 py-3 rounded-none font-bold text-sm uppercase tracking-wider items-center transition-colors"
+                >
+                  LOGOUT
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="hidden md:flex bg-[#ff0000] hover:bg-[#cc0000] text-white px-8 py-3 rounded-none font-bold text-sm uppercase tracking-wider items-center transition-colors"
+              >
+                LOGIN
+              </Link>
+            )}
 
             <Link
               href="/appointment"
@@ -150,13 +173,35 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-4 border-t border-gray-100 flex flex-col gap-4">
-                <Link
-                  href="/login"
-                  className="bg-[#ff0000] hover:bg-[#cc0000] text-white px-6 py-3 rounded-none font-bold text-sm w-full flex justify-center items-center uppercase tracking-wider transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  LOGIN
-                </Link>
+                {status === "authenticated" ? (
+                  <>
+                    <Link
+                      href="/admin"
+                      className="text-gray-900 hover:text-primary px-6 py-3 font-bold text-sm w-full flex justify-center items-center uppercase tracking-wider transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={async () => {
+                        setMobileMenuOpen(false);
+                        await signOut({ redirect: false });
+                        router.push("/");
+                      }}
+                      className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-none font-bold text-sm w-full flex justify-center items-center uppercase tracking-wider transition-colors"
+                    >
+                      LOGOUT
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="bg-[#ff0000] hover:bg-[#cc0000] text-white px-6 py-3 rounded-none font-bold text-sm w-full flex justify-center items-center uppercase tracking-wider transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    LOGIN
+                  </Link>
+                )}
                 <Link
                   href="/appointment"
                   className="bg-primary text-white px-6 py-3 rounded-full font-bold text-sm w-full flex justify-center items-center gap-2"

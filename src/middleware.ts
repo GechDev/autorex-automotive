@@ -17,7 +17,7 @@ export default auth((req) => {
     const userRole = req.auth?.user?.role;
     const allowedRoles = ["ADMIN", "MANAGER", "EMPLOYEE"];
 
-    if (!userRole || !allowedRoles.includes(userRole)) {
+    if (!userRole || !allowedRoles.includes(userRole.toUpperCase())) {
       return NextResponse.redirect(new URL("/unauthorized", req.nextUrl.origin));
     }
   }

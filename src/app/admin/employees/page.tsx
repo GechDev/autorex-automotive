@@ -4,13 +4,12 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminEmployeesPage() {
-  const employees = await prisma.user.findMany({
-    where: {
-      role: {
-        in: ["ADMIN", "MANAGER", "EMPLOYEE"]
-      }
+  const employees = await prisma.employee.findMany({
+    include: {
+      info: true,
+      roles: { include: { role: true } }
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { added_date: "desc" },
   });
 
   return (
@@ -39,19 +38,19 @@ export default async function AdminEmployeesPage() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {employees.map((e, i) => (
-              <tr key={e.id} className={`hover:bg-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}`}>
-                <td className="px-6 py-4 text-gray-600">Yes</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{e.name?.split(' ')[0] || "Unknown"}</td>
-                <td className="px-6 py-4 font-bold text-gray-900">{e.name?.split(' ').slice(1).join(' ') || ""}</td>
-                <td className="px-6 py-4 text-gray-600">{e.email}</td>
-                <td className="px-6 py-4 text-gray-600">{"N/A"}</td>
+              <tr key={e.employee_id} className={`hover:bg-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}`}>
+                <td className="px-6 py-4 text-gray-600">{e.active_employee === 1 ? 'Yes' : 'No'}</td>
+                <td className="px-6 py-4 font-bold text-gray-900">{e.info?.employee_first_name || "Unknown"}</td>
+                <td className="px-6 py-4 font-bold text-gray-900">{e.info?.employee_last_name || ""}</td>
+                <td className="px-6 py-4 text-gray-600">{e.employee_email}</td>
+                <td className="px-6 py-4 text-gray-600">{e.info?.employee_phone || "N/A"}</td>
                 <td className="px-6 py-4 text-gray-600">
-                  {new Date(e.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, ' - ')} | {new Date(e.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  {new Date(e.added_date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, ' - ')} | {new Date(e.added_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
                 </td>
-                <td className="px-6 py-4 text-gray-600">{e.role === 'ADMIN' ? 'Admin' : e.role === 'MANAGER' ? 'Manager' : 'Employee'}</td>
+                <td className="px-6 py-4 text-gray-600">{e.roles[0]?.role?.company_role_name || 'Employee'}</td>
                 <td className="px-6 py-4">
                   <div className="flex gap-3">
-                    <Link href={`/admin/employees/${e.id}/edit`} className="text-gray-900 hover:text-primary transition-colors">
+                    <Link href={`/admin/employees/${e.employee_id}/edit`} className="text-gray-900 hover:text-primary transition-colors">
                       <Edit className="w-4 h-4" />
                     </Link>
                     <button className="text-gray-900 hover:text-primary transition-colors">
@@ -61,6 +60,7 @@ export default async function AdminEmployeesPage() {
                 </td>
               </tr>
             ))}
+
             {employees.length === 0 && (
               <tr>
                 <td colSpan={8} className="px-6 py-8 text-center text-gray-500">

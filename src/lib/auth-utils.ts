@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { UserRole } from "@/generated/prisma/enums";
 
 export async function requireAuth() {
   const session = await auth();
@@ -11,10 +10,11 @@ export async function requireAuth() {
   return session.user;
 }
 
-export async function requireRole(allowedRoles: UserRole[]) {
+export async function requireRole(allowedRoles: string[]) {
   const user = await requireAuth();
   
-  if (!allowedRoles.includes(user.role as UserRole)) {
+  const upperAllowed = allowedRoles.map(r => r.toUpperCase());
+  if (!upperAllowed.includes(user.role?.toUpperCase() || "")) {
     throw new Error("Forbidden: You do not have permission to perform this action.");
   }
   
