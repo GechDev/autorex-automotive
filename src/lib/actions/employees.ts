@@ -110,7 +110,7 @@ export async function updateEmployee(
       });
       
       if (data.role) {
-         let companyRole = await prisma.companyRole.findUnique({
+         const companyRole = await prisma.companyRole.findUnique({
            where: { company_role_name: data.role }
          });
          if (companyRole) {
