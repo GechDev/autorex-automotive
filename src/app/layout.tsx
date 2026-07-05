@@ -23,15 +23,19 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://autorex.com"),
 };
 
-export default function RootLayout({
+import { auth } from "@/lib/auth";
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+  
   return (
     <html lang="en" className={`${poppins.variable} ${yantramanav.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        <AppSessionProvider>{children}</AppSessionProvider>
+        <AppSessionProvider session={session}>{children}</AppSessionProvider>
       </body>
     </html>
   );

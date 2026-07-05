@@ -5,21 +5,25 @@ import { signIn } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { loginSchema, registerSchema, LoginInput, RegisterInput } from "@/lib/validations/auth";
-import { UserRole } from "@/generated/prisma/enums";
 
 export async function loginAction(data: LoginInput) {
   try {
     const validatedData = loginSchema.parse(data);
 
-    // Call NextAuth signIn
     await signIn("credentials", {
       email: validatedData.email,
       password: validatedData.password,
-      redirect: false, // We'll handle redirection on the client
+      redirect: false,
     });
 
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Login Error:", error);
+    
+    if (error?.message?.includes("NEXT_REDIRECT") || error?.digest?.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
@@ -29,7 +33,6 @@ export async function loginAction(data: LoginInput) {
       }
     }
     
-    // Zod errors or other errors
     return { error: "Invalid email or password" };
   }
 }
@@ -38,33 +41,55 @@ export async function registerAction(data: RegisterInput) {
   try {
     const validatedData = registerSchema.parse(data);
     
-    // Normalize email
     const email = validatedData.email.toLowerCase();
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    const existingEmployee = await prisma.employee.findUnique({
+      where: { employee_email: email },
     });
 
-    if (existingUser) {
-      // Don't reveal account existence for security, or show generic message
+    if (existingEmployee) {
       return { error: "An account with this email already exists." };
     }
 
-    // Hash password
     const passwordHash = await bcrypt.hash(validatedData.password, 12);
 
-    // Create user (default role is EMPLOYEE as per schema, but let's enforce it)
-    await prisma.user.create({
+    let employeeRole = await prisma.companyRole.findUnique({
+      where: { company_role_name: "Employee" }
+    });
+
+    if (!employeeRole) {
+      employeeRole = await prisma.companyRole.create({
+        data: { company_role_name: "Employee" }
+      });
+    }
+
+    const [firstName, ...lastNameParts] = validatedData.name.split(" ");
+    const lastName = lastNameParts.join(" ") || "";
+
+    await prisma.employee.create({
       data: {
-        name: validatedData.name,
-        email,
-        passwordHash,
-        role: UserRole.EMPLOYEE, // Force least-privileged role
+        employee_email: email,
+        active_employee: 1,
+        info: {
+          create: {
+            employee_first_name: firstName,
+            employee_last_name: lastName,
+            employee_phone: "",
+          }
+        },
+        pass: {
+          create: {
+            employee_password_hashed: passwordHash,
+          }
+        },
+        roles: {
+          create: {
+            company_role_id: employeeRole.company_role_id,
+          }
+        }
       },
     });
 
-    // We can auto-login after register or just tell client to redirect to login
     return { success: true };
   } catch (error) {
     return { error: "Failed to create account. Please try again." };

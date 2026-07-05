@@ -1,13 +1,10 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { UserRole } from "@/generated/prisma/enums";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -17,7 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as { role: UserRole }).role;
+        token.role = (user as any).role;
       }
       return token;
     },
@@ -45,19 +42,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null;
 
         const { email, password } = parsed.data;
-        const user = await prisma.user.findUnique({ where: { email } });
+        const employee = await prisma.employee.findUnique({
+          where: { employee_email: email },
+          include: { pass: true, roles: { include: { role: true } }, info: true }
+        });
 
-        if (!user || !user.passwordHash) return null;
+        if (!employee || !employee.pass?.employee_password_hashed) return null;
 
-        const valid = await bcrypt.compare(password, user.passwordHash);
+        const valid = await bcrypt.compare(password, employee.pass.employee_password_hashed);
         if (!valid) return null;
 
+        const roleName = employee.roles[0]?.role?.company_role_name || "Employee";
+
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          image: user.image,
+          id: employee.employee_id.toString(),
+          email: employee.employee_email,
+          name: `${employee.info?.employee_first_name || ''} ${employee.info?.employee_last_name || ''}`.trim(),
+          role: roleName,
         };
       },
     }),

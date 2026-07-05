@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { requireRole } from "@/lib/auth-utils";
-import { UserRole } from "@/generated/prisma/enums";
 
 export default async function AdminLayout({
   children,
@@ -11,8 +10,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   try {
-    // Verify authentication and role
-    await requireRole([UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE]);
+    await requireRole(["Admin", "Manager", "Employee"]);
   } catch (error) {
     // If not authenticated or wrong role, redirect to login
     redirect("/login");
