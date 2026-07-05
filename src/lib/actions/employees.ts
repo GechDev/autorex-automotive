@@ -91,11 +91,11 @@ export async function updateEmployee(
         where: { employee_id: parseInt(id) },
         data: {
           ...(data.email && { employee_email: data.email }),
-          ...(data.name && {
+          ...( (data.firstName || data.lastName) && {
             info: {
               update: {
-                employee_first_name: data.name.split(" ")[0],
-                employee_last_name: data.name.split(" ").slice(1).join(" ") || "",
+                ...(data.firstName && { employee_first_name: data.firstName }),
+                ...(data.lastName && { employee_last_name: data.lastName }),
               }
             }
           }),

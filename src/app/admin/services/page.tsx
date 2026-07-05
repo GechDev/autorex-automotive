@@ -3,10 +3,11 @@ import { Edit, Trash2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ServiceForm } from "@/components/admin/ServiceForm";
 
 export default async function AdminServicesPage() {
-  const servicesList = await prisma.service.findMany({
-    orderBy: { createdAt: "desc" },
+  const servicesList = await prisma.commonService.findMany({
+    orderBy: { service_id: "desc" },
   });
 
   return (
@@ -24,11 +25,11 @@ export default async function AdminServicesPage() {
       
       <div className="flex flex-col gap-4 mb-12">
         {servicesList.map((service) => (
-          <div key={service.id} className="flex flex-col md:flex-row md:items-start justify-between gap-4 p-6 bg-white border border-gray-100 rounded-sm shadow-sm hover:shadow-md transition-shadow">
+          <div key={service.service_id} className="flex flex-col md:flex-row md:items-start justify-between gap-4 p-6 bg-white border border-gray-100 rounded-sm shadow-sm hover:shadow-md transition-shadow">
             <div className="flex-1 pr-12">
-              <h4 className="font-heading font-bold text-[18px] text-[#001659] mb-2">{service.name}</h4>
+              <h4 className="font-heading font-bold text-[18px] text-[#001659] mb-2">{service.service_name}</h4>
               <p className="text-gray-500 text-[14px] leading-relaxed line-clamp-2">
-                {service.description}
+                {service.service_description}
               </p>
             </div>
             <div className="flex items-center gap-4 shrink-0 self-start md:self-center">
@@ -54,31 +55,9 @@ export default async function AdminServicesPage() {
           <div className="absolute -bottom-2 left-0 w-12 h-0.5 bg-primary"></div>
         </h3>
         
-        <form className="space-y-6 max-w-3xl">
-          <div>
-            <Input 
-              type="text" 
-              placeholder="Service name" 
-              className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
-            />
-          </div>
-          
-          <div>
-            <textarea 
-              placeholder="Service description" 
-              className="w-full h-[150px] p-4 text-[15px] border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder:text-gray-400 italic bg-white resize-none"
-            ></textarea>
-          </div>
-
-          <div className="pt-2">
-            <Button 
-              type="submit" 
-              className="bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
-            >
-              ADD SERVICE
-            </Button>
-          </div>
-        </form>
+        <div className="max-w-3xl">
+          <ServiceForm />
+        </div>
       </div>
       
     </div>

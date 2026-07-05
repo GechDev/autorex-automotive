@@ -9,8 +9,6 @@ const customerSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Please enter a valid phone number"),
-  address: z.string().optional(),
-  notes: z.string().optional(),
 });
 
 export type CustomerFormData = z.infer<typeof customerSchema>;
@@ -23,7 +21,20 @@ export async function createCustomer(
     return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
   }
   try {
-    await prisma.customer.create({ data: parsed.data });
+    await prisma.customerIdentifier.create({ 
+      data: {
+        customer_email: parsed.data.email,
+        customer_phone_number: parsed.data.phone,
+        customer_hash: Math.random().toString(36).substring(2, 15), // Basic placeholder for hash
+        info: {
+          create: {
+            customer_first_name: parsed.data.firstName,
+            customer_last_name: parsed.data.lastName,
+            active_customer_status: 1
+          }
+        }
+      } 
+    });
     revalidatePath("/admin/customers");
     return { success: true };
   } catch (error) {
@@ -37,7 +48,22 @@ export async function updateCustomer(
   data: Partial<CustomerFormData>
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await prisma.customer.update({ where: { id }, data });
+    const numId = parseInt(id);
+    await prisma.customerIdentifier.update({ 
+      where: { customer_id: numId }, 
+      data: {
+        ...(data.email && { customer_email: data.email }),
+        ...(data.phone && { customer_phone_number: data.phone }),
+        ...( (data.firstName || data.lastName) && {
+          info: {
+            update: {
+              ...(data.firstName && { customer_first_name: data.firstName }),
+              ...(data.lastName && { customer_last_name: data.lastName }),
+            }
+          }
+        })
+      } 
+    });
     revalidatePath("/admin/customers");
     revalidatePath(`/admin/customers/${id}`);
     return { success: true };
@@ -51,7 +77,9 @@ export async function deleteCustomer(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await prisma.customer.delete({ where: { id } });
+    const numId = parseInt(id);
+    await prisma.customerInfo.deleteMany({ where: { customer_id: numId } });
+    await prisma.customerIdentifier.delete({ where: { customer_id: numId } });
     revalidatePath("/admin/customers");
     return { success: true };
   } catch (error) {

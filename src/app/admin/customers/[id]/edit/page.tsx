@@ -1,8 +1,27 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
+import { CustomerForm } from "@/components/admin/CustomerForm";
+import { notFound } from "next/navigation";
 
-export default function EditCustomerPage() {
+export default async function EditCustomerPage({ params }: { params: { id: string } }) {
+  const customerId = parseInt(params.id);
+  
+  const customer = await prisma.customerIdentifier.findUnique({
+    where: { customer_id: customerId },
+    include: { info: true }
+  });
+
+  if (!customer) {
+    notFound();
+  }
+
+  const initialData = {
+    email: customer.customer_email,
+    firstName: customer.info?.customer_first_name || "",
+    lastName: customer.info?.customer_last_name || "",
+    phone: customer.customer_phone_number,
+  };
+
   return (
     <div className="max-w-4xl py-8">
       
@@ -14,52 +33,10 @@ export default function EditCustomerPage() {
       </div>
       
       <div className="max-w-3xl">
-        <form className="space-y-6">
-          <div>
-            <Input 
-              type="email" 
-              placeholder="Customer email" 
-              defaultValue="test@evangadi.com"
-              className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
-            />
-          </div>
-          
-          <div>
-            <Input 
-              type="text" 
-              placeholder="Customer first name" 
-              defaultValue="Adugna"
-              className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
-            />
-          </div>
-          
-          <div>
-            <Input 
-              type="text" 
-              placeholder="Customer last name" 
-              defaultValue="Bekele"
-              className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
-            />
-          </div>
-          
-          <div>
-            <Input 
-              type="text" 
-              placeholder="Customer phone (555-555-5555)" 
-              defaultValue="2023862702"
-              className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
-            />
-          </div>
-
-          <div className="pt-2">
-            <Button 
-              type="submit" 
-              className="bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
-            >
-              UPDATE CUSTOMER
-            </Button>
-          </div>
-        </form>
+        <CustomerForm 
+          initialData={initialData} 
+          customerId={params.id}
+        />
       </div>
       
     </div>

@@ -5,12 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 const serviceSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  slug: z.string().min(2, "Slug must be at least 2 characters").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  icon: z.string().optional(),
-  image: z.string().optional(),
-  isActive: z.boolean().default(true),
+  name: z.string().min(1, "Service name is required"),
+  description: z.string().optional(),
 });
 
 export type ServiceFormData = z.infer<typeof serviceSchema>;
@@ -23,13 +19,17 @@ export async function createService(
     return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
   }
   try {
-    await prisma.service.create({ data: parsed.data });
+    await prisma.commonService.create({ 
+      data: {
+        service_name: parsed.data.name,
+        service_description: parsed.data.description || ""
+      } 
+    });
     revalidatePath("/admin/services");
-    revalidatePath("/services");
     return { success: true };
   } catch (error) {
     console.error("Failed to create service:", error);
-    return { success: false, error: "Failed to create service. Slug may already exist." };
+    return { success: false, error: "Failed to create service." };
   }
 }
 
@@ -38,26 +38,19 @@ export async function updateService(
   data: Partial<ServiceFormData>
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await prisma.service.update({ where: { id }, data });
+    const numId = parseInt(id);
+    await prisma.commonService.update({ 
+      where: { service_id: numId }, 
+      data: {
+        ...(data.name && { service_name: data.name }),
+        ...(data.description !== undefined && { service_description: data.description }),
+      } 
+    });
     revalidatePath("/admin/services");
-    revalidatePath("/services");
+    revalidatePath(`/admin/services/${id}`);
     return { success: true };
   } catch (error) {
     console.error("Failed to update service:", error);
-    return { success: false, error: "Failed to update service" };
-  }
-}
-
-export async function toggleServiceActive(
-  id: string,
-  isActive: boolean
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    await prisma.service.update({ where: { id }, data: { isActive } });
-    revalidatePath("/admin/services");
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to toggle service:", error);
     return { success: false, error: "Failed to update service" };
   }
 }
@@ -66,9 +59,9 @@ export async function deleteService(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await prisma.service.delete({ where: { id } });
+    const numId = parseInt(id);
+    await prisma.commonService.delete({ where: { service_id: numId } });
     revalidatePath("/admin/services");
-    revalidatePath("/services");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete service:", error);
