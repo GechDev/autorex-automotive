@@ -109,6 +109,13 @@ export function Header() {
           {/* Book Now Button & Mobile Toggle */}
           <div className="flex items-center gap-4">
             <Link
+              href="/login"
+              className="hidden md:flex text-gray-900 hover:text-primary font-bold text-sm items-center gap-1"
+            >
+              Login
+            </Link>
+
+            <Link
               href="/appointment"
               className="hidden md:flex bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm transition-transform hover:scale-105 items-center gap-2 shadow-lg shadow-red-500/20"
             >
@@ -142,7 +149,14 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4 border-t border-gray-100 flex flex-col gap-4">
+                <Link
+                  href="/login"
+                  className="block font-bold text-base text-gray-900"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
                 <Link
                   href="/appointment"
                   className="bg-primary text-white px-6 py-3 rounded-full font-bold text-sm w-full flex justify-center items-center gap-2"
