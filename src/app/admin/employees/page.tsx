@@ -1,6 +1,7 @@
 import React from "react";
 import { Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { DeleteEmployeeButton } from "@/components/admin/DeleteEmployeeButton";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminEmployeesPage() {
@@ -53,9 +54,7 @@ export default async function AdminEmployeesPage() {
                     <Link href={`/admin/employees/${e.employee_id}/edit`} className="text-gray-900 hover:text-primary transition-colors">
                       <Edit className="w-4 h-4" />
                     </Link>
-                    <button className="text-gray-900 hover:text-primary transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <DeleteEmployeeButton employeeId={e.employee_id} />
                   </div>
                 </td>
               </tr>
