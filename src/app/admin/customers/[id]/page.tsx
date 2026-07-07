@@ -9,11 +9,13 @@ export default async function CustomerProfilePage({
   params,
   searchParams 
 }: { 
-  params: { id: string },
-  searchParams: { addVehicle?: string }
+  params: Promise<{ id: string }>,
+  searchParams: Promise<{ addVehicle?: string }>
 }) {
-  const customerId = parseInt(params.id);
-  const showAddVehicle = searchParams.addVehicle === "true";
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const customerId = parseInt(resolvedParams.id);
+  const showAddVehicle = resolvedSearchParams.addVehicle === "true";
 
   const customer = await prisma.customerIdentifier.findUnique({
     where: { customer_id: customerId },

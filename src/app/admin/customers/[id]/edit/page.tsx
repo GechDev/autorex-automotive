@@ -3,8 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { CustomerForm } from "@/components/admin/CustomerForm";
 import { notFound } from "next/navigation";
 
-export default async function EditCustomerPage({ params }: { params: { id: string } }) {
-  const customerId = parseInt(params.id);
+export default async function EditCustomerPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const customerId = parseInt(resolvedParams.id);
   
   const customer = await prisma.customerIdentifier.findUnique({
     where: { customer_id: customerId },
@@ -35,7 +36,7 @@ export default async function EditCustomerPage({ params }: { params: { id: strin
       <div className="max-w-3xl">
         <CustomerForm 
           initialData={initialData} 
-          customerId={params.id}
+          customerId={resolvedParams.id}
         />
       </div>
       

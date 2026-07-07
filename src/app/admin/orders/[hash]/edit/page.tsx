@@ -2,9 +2,10 @@ import React from "react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
-export default async function EditOrderPage({ params }: { params: { hash: string } }) {
+export default async function EditOrderPage({ params }: { params: Promise<{ hash: string }> }) {
+  const resolvedParams = await params;
   const order = await prisma.order.findFirst({
-    where: { order_hash: params.hash },
+    where: { order_hash: resolvedParams.hash },
     include: {
       customer: { include: { info: true } },
       vehicle: true,
