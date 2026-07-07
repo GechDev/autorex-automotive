@@ -7,9 +7,8 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
   const resolvedParams = await params;
   const customerId = parseInt(resolvedParams.id);
   
-  const customer = await prisma.customerIdentifier.findUnique({
-    where: { customer_id: customerId },
-    include: { info: true }
+  const customer = await prisma.customer.findUnique({
+    where: { id: customerId }
   });
 
   if (!customer) {
@@ -17,10 +16,10 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
   }
 
   const initialData = {
-    email: customer.customer_email,
-    firstName: customer.info?.customer_first_name || "",
-    lastName: customer.info?.customer_last_name || "",
-    phone: customer.customer_phone_number,
+    email: customer.email,
+    firstName: customer.firstName || "",
+    lastName: customer.lastName || "",
+    phone: customer.phoneNumber,
   };
 
   return (
