@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Trash2, Loader2, AlertTriangle } from "lucide-react";
 import { deleteEmployee } from "@/lib/actions/employees";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,10 +27,11 @@ export function DeleteEmployeeButton({ employeeId }: { employeeId: number }) {
     setIsDeleting(true);
     const result = await deleteEmployee(employeeId.toString());
     if (result.success) {
+      toast.success("Employee deleted successfully!");
       setOpen(false);
       router.refresh();
     } else {
-      alert(result.error || "Failed to delete employee");
+      toast.error(result.error || "Failed to delete employee");
       setIsDeleting(false);
     }
   };

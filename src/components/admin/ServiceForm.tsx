@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { createService } from "@/lib/actions/services";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, "Service name is required"),
@@ -37,8 +38,10 @@ export function ServiceForm() {
 
     if (!result.success) {
       setError(result.error || "Failed to create service.");
+      toast.error(result.error || "Failed to create service.");
       setIsSubmitting(false);
     } else {
+      toast.success("Service created successfully!");
       router.push("/admin/services");
       router.refresh();
     }

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { createCustomer, updateCustomer } from "@/lib/actions/customers";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -53,9 +54,12 @@ export function CustomerForm({
     }
 
     if (!result.success) {
-      setError(result.error || `Failed to ${isEditMode ? 'update' : 'create'} customer.`);
+      const errorMessage = result.error || `Failed to ${isEditMode ? 'update' : 'create'} customer.`;
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsSubmitting(false);
     } else {
+      toast.success(`Customer ${isEditMode ? 'updated' : 'created'} successfully!`);
       router.push(isEditMode ? `/admin/customers/${customerId}` : "/admin/customers");
       router.refresh();
     }

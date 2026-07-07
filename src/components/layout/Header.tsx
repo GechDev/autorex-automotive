@@ -140,9 +140,9 @@ export function Header() {
 
             <Link
               href="/appointment"
-              className="hidden md:flex bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm transition-transform hover:scale-105 items-center gap-2 shadow-lg shadow-red-500/20"
+              className="hidden md:flex bg-[#ff0000] hover:bg-[#cc0000] text-white px-8 py-3 rounded-none font-bold text-sm uppercase tracking-wider items-center gap-2 transition-colors"
             >
-              Book Now
+              BOOK NOW
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
 
@@ -204,10 +204,10 @@ export function Header() {
                 )}
                 <Link
                   href="/appointment"
-                  className="bg-primary text-white px-6 py-3 rounded-full font-bold text-sm w-full flex justify-center items-center gap-2"
+                  className="bg-[#ff0000] hover:bg-[#cc0000] text-white px-6 py-3 rounded-none font-bold text-sm uppercase tracking-wider w-full flex justify-center items-center gap-2 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Book Now
+                  BOOK NOW
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </Link>
               </div>

@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import { createOrder } from "@/lib/actions/orders";
+import toast from "react-hot-toast";
 
 export function OrderForm({ 
   customers, 
@@ -25,9 +27,28 @@ export function OrderForm({
   const [employeeId, setEmployeeId] = useState("");
   const [totalPrice, setTotalPrice] = useState("");
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
+  const [serviceSearchQuery, setServiceSearchQuery] = useState("");
 
   // Filter vehicles by selected customer
   const filteredVehicles = vehicles.filter(v => v.customer_id === parseInt(customerId));
+
+  const customerOptions = customers.map(c => ({
+    value: c.customer_id.toString(),
+    label: `${c.info?.customer_first_name} ${c.info?.customer_last_name}`,
+    subLabel: c.customer_email
+  }));
+
+  const vehicleOptions = filteredVehicles.map(v => ({
+    value: v.vehicle_id.toString(),
+    label: `${v.vehicle_year} ${v.vehicle_make} ${v.vehicle_model}`,
+    subLabel: v.vehicle_tag
+  }));
+
+  const employeeOptions = employees.map(e => ({
+    value: e.employee_id.toString(),
+    label: `${e.info?.employee_first_name} ${e.info?.employee_last_name}`,
+    subLabel: e.roles?.[0]?.role?.company_role_name || "Employee"
+  }));
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,18 +71,28 @@ export function OrderForm({
 
     if (!result.success) {
       setError(result.error || "Failed to create order.");
+      toast.error(result.error || "Failed to create order.");
       setIsSubmitting(false);
     } else {
+      toast.success("Order created successfully!");
       router.push("/admin/orders");
       router.refresh();
     }
   };
 
   const toggleService = (id: number) => {
-    setSelectedServices(prev => 
-      prev.includes(id) ? prev.filter(sId => sId !== id) : [...prev, id]
-    );
+    setSelectedServices(prev => {
+      const isSelected = prev.includes(id);
+      const newSelected = isSelected ? prev.filter(sId => sId !== id) : [...prev, id];
+      // Automatically update the total price ($75 per service as a baseline)
+      setTotalPrice((newSelected.length * 75).toFixed(2));
+      return newSelected;
+    });
   };
+
+  const filteredServices = services.filter(s => 
+    s.service_name.toLowerCase().includes(serviceSearchQuery.toLowerCase())
+  );
 
   return (
     <form className="space-y-6" onSubmit={onSubmit}>
@@ -74,38 +105,30 @@ export function OrderForm({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Customer</label>
-          <select 
-            className="w-full h-[52px] px-4 text-[15px] border-gray-200 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary bg-white"
+          <Combobox
             value={customerId}
-            onChange={(e) => {
-              setCustomerId(e.target.value);
+            onChange={(val) => {
+              setCustomerId(val);
               setVehicleId(""); // Reset vehicle when customer changes
             }}
-          >
-            <option value="">Select a customer</option>
-            {customers.map(c => (
-              <option key={c.customer_id} value={c.customer_id}>
-                {c.info?.customer_first_name} {c.info?.customer_last_name} ({c.customer_email})
-              </option>
-            ))}
-          </select>
+            options={customerOptions}
+            placeholder="Select a customer..."
+            emptyText="No customers found."
+            triggerClassName="h-[52px] border-gray-200 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
+          />
         </div>
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Vehicle</label>
-          <select 
-            className="w-full h-[52px] px-4 text-[15px] border-gray-200 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary bg-white"
+          <Combobox
             value={vehicleId}
-            onChange={(e) => setVehicleId(e.target.value)}
+            onChange={(val) => setVehicleId(val)}
+            options={vehicleOptions}
+            placeholder="Select a vehicle..."
+            emptyText={customerId ? "No vehicles found." : "Please select a customer first."}
             disabled={!customerId}
-          >
-            <option value="">Select a vehicle</option>
-            {filteredVehicles.map(v => (
-              <option key={v.vehicle_id} value={v.vehicle_id}>
-                {v.vehicle_year} {v.vehicle_make} {v.vehicle_model} ({v.vehicle_tag})
-              </option>
-            ))}
-          </select>
+            triggerClassName="h-[52px] border-gray-200 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
+          />
           {customerId && filteredVehicles.length === 0 && (
             <p className="text-sm text-yellow-600 mt-1">This customer has no vehicles. Please add a vehicle first.</p>
           )}
@@ -113,18 +136,14 @@ export function OrderForm({
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Assigned Employee</label>
-          <select 
-            className="w-full h-[52px] px-4 text-[15px] border-gray-200 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary bg-white"
+          <Combobox
             value={employeeId}
-            onChange={(e) => setEmployeeId(e.target.value)}
-          >
-            <option value="">Select an employee</option>
-            {employees.map(e => (
-              <option key={e.employee_id} value={e.employee_id}>
-                {e.info?.employee_first_name} {e.info?.employee_last_name}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setEmployeeId(val)}
+            options={employeeOptions}
+            placeholder="Select an employee..."
+            emptyText="No employees found."
+            triggerClassName="h-[52px] border-gray-200 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
+          />
         </div>
 
         <div>
@@ -143,21 +162,37 @@ export function OrderForm({
 
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-2">Select Services</label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 border border-gray-200 p-4 rounded-sm">
-          {services.map(s => (
-            <label key={s.service_id} className="flex items-center space-x-3 cursor-pointer">
-              <input 
-                type="checkbox" 
-                checked={selectedServices.includes(s.service_id)}
-                onChange={() => toggleService(s.service_id)}
-                className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
-              />
-              <span className="text-gray-700 text-sm">{s.service_name}</span>
-            </label>
-          ))}
-          {services.length === 0 && (
-            <p className="text-sm text-gray-500">No services available. Please add services first.</p>
-          )}
+        <div className="border border-gray-200 rounded-sm bg-white overflow-hidden flex flex-col focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+          <div className="p-3 border-b border-gray-200 bg-gray-50/50">
+            <input 
+              type="text" 
+              placeholder="Search services..." 
+              value={serviceSearchQuery}
+              onChange={(e) => setServiceSearchQuery(e.target.value)}
+              className="w-full px-3 py-2 text-[14px] bg-white border border-gray-200 rounded-sm focus:border-primary focus:outline-none placeholder:text-gray-400"
+            />
+          </div>
+          <div className="p-4 max-h-[240px] overflow-y-auto">
+            {filteredServices.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
+                {filteredServices.map(s => (
+                  <label key={s.service_id} className="flex items-start space-x-3 cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedServices.includes(s.service_id)}
+                      onChange={() => toggleService(s.service_id)}
+                      className="mt-0.5 w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer transition-colors"
+                    />
+                    <span className="text-gray-700 text-[14px] leading-tight group-hover:text-gray-900 transition-colors">{s.service_name}</span>
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[14px] text-gray-500 py-6 text-center">
+                {services.length === 0 ? "No services available. Please add services first." : "No services found."}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

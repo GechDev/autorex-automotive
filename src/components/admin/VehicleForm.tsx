@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createVehicle } from "@/lib/actions/vehicles";
 import { Input } from "@/components/ui/input";
+import toast from "react-hot-toast";
 
 export function VehicleForm({ customerId, onCancel }: { customerId: number, onCancel: () => void }) {
   const router = useRouter();
@@ -34,8 +35,10 @@ export function VehicleForm({ customerId, onCancel }: { customerId: number, onCa
 
     if (!result.success) {
       setError(result.error || "Failed to create vehicle.");
+      toast.error(result.error || "Failed to create vehicle.");
       setIsSubmitting(false);
     } else {
+      toast.success("Vehicle created successfully!");
       router.push(`/admin/customers/${customerId}`);
       router.refresh();
     }

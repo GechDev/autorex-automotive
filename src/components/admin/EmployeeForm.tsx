@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { createEmployee, updateEmployee } from "@/lib/actions/employees";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -60,9 +61,12 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
     }
 
     if (!result.success) {
-      setError(result.error || `Failed to ${employeeId ? 'update' : 'create'} employee.`);
+      const errorMessage = result.error || `Failed to ${employeeId ? 'update' : 'create'} employee.`;
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsSubmitting(false);
     } else {
+      toast.success(`Employee ${employeeId ? 'updated' : 'created'} successfully!`);
       router.push("/admin/employees");
       router.refresh();
     }

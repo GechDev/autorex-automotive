@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 };
 
 import { auth } from "@/lib/auth";
+import { Toaster } from "react-hot-toast";
 
 export default async function RootLayout({
   children,
@@ -35,7 +36,50 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${yantramanav.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
-        <AppSessionProvider session={session}>{children}</AppSessionProvider>
+        <AppSessionProvider session={session}>
+          {children}
+          <Toaster 
+            position="top-center"
+            containerStyle={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              position: 'fixed'
+            }}
+            toastOptions={{
+              duration: 1100,
+              style: {
+                padding: '24px 32px',
+                color: '#fff',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                minWidth: '300px',
+                textAlign: 'center',
+                zIndex: 9999,
+              },
+              success: {
+                style: {
+                  background: '#10b981',
+                },
+                iconTheme: {
+                  primary: '#fff',
+                  secondary: '#10b981',
+                },
+              },
+              error: {
+                style: {
+                  background: '#ef4444',
+                },
+                iconTheme: {
+                  primary: '#fff',
+                  secondary: '#ef4444',
+                },
+              },
+            }}
+          />
+        </AppSessionProvider>
       </body>
     </html>
   );
