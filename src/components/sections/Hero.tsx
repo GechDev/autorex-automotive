@@ -7,11 +7,11 @@ import { business } from "@/lib/config/business";
 
 export function Hero() {
   return (
-    <section className="relative pt-[30px] pb-[120px] lg:pt-[60px] lg:pb-[180px] overflow-hidden bg-[#111] mt-0">
+    <section className="relative pt-[30px] pb-[140px] md:pb-[230px] lg:pt-[50px] lg:pb-[220px] xl:pb-[250px] overflow-hidden bg-[#100] mt-0">
       {/* Background Image */}
       <div
         className="absolute inset-0 z-0 opacity-40 mix-blend-overlay"
-        style={{ backgroundImage: "url('/images/carhive/hero_bg.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
+        style={{ backgroundImage: "url('/images/carhive/image.png')", backgroundSize: "cover", backgroundPosition: "center" }}
         aria-hidden="true"
       />
       
@@ -22,7 +22,7 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
           {/* Left Column (Text) */}
-          <div className="text-left">
+          <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
             <h1 className="font-heading font-black text-[50px] md:text-[70px] leading-[1.1] mb-6 tracking-tight">
               <span className="text-white block">Trusted Auto</span>
               <span className="text-primary block">Repairs Experts</span>
@@ -32,10 +32,10 @@ export function Hero() {
               Professional car service and auto repair solutions. We provide certified technicians and advanced diagnostic tools to ensure your vehicle stays in perfect condition.
             </p>
             
-            <div className="flex flex-wrap items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
               <Link
                 href="/appointment"
-                className="bg-primary text-white px-8 py-4 rounded-full font-bold text-sm transition-transform hover:scale-105 inline-flex items-center gap-2"
+                className="bg-primary text-white px-8 py-4 rounded-full font-bold text-sm transition-transform hover:scale-105 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 Schedule An Appointment
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
@@ -45,7 +45,7 @@ export function Hero() {
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary flex-shrink-0">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                 </div>
-                <div>
+                <div className="text-left">
                   <div className="text-white font-bold text-lg">Need Help</div>
                   <div className="text-gray-400 text-sm">{business.phoneDisplay}</div>
                 </div>
@@ -100,13 +100,20 @@ export function Hero() {
       </div>
       
       {/* Red Car Overlapping Image */}
-      <div className="absolute bottom-[-50px] right-1/4 lg:right-1/3 transform translate-x-1/2 z-30 pointer-events-none hidden md:block">
+      <div className="
+        absolute z-30 pointer-events-none
+        bottom-0 left-1/2 -translate-x-1/2
+        w-[85%] max-w-[320px]
+        md:w-[60%] md:max-w-[440px] md:left-1/2 md:-translate-x-1/2 md:bottom-[-10px]
+        lg:w-[580px] lg:max-w-none lg:left-[62%] lg:-translate-x-1/2 lg:bottom-0
+        xl:w-[660px] xl:left-[63%] xl:bottom-[10px]
+      ">
         <Image
-          src="/images/carhive/red_car.jpg"
+          src="/images/carhive/red_car.png"
           alt="Sports Car"
-          width={600}
-          height={300}
-          className="object-cover rounded-3xl mix-blend-lighten opacity-90 shadow-2xl"
+          width={800}
+          height={400}
+          className="object-contain mix-blend-lighten opacity-95 w-full h-auto drop-shadow-2xl"
         />
       </div>
     </section>

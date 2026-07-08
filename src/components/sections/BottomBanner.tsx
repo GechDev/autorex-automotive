@@ -48,20 +48,20 @@ export function BottomBanner() {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className="w-full bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:bg-white transition-colors text-sm shadow-inner"
+                  className="w-full bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:bg-white transition-colors text-sm shadow-inner"
                   required
                 />
                 <input
                   type="tel"
                   placeholder="Phone Number"
-                  className="w-full bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:bg-white transition-colors text-sm shadow-inner"
+                  className="w-full bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:bg-white transition-colors text-sm shadow-inner"
                   required
                 />
               </div>
               <textarea
                 placeholder="Message"
                 rows={4}
-                className="w-full bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:bg-white transition-colors text-sm resize-none shadow-inner"
+                className="w-full bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:bg-white transition-colors text-sm resize-none shadow-inner"
                 required
               ></textarea>
               <button

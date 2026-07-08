@@ -13,7 +13,7 @@ export function Experience() {
           
           {/* Left Column (Text & Features) */}
           <div className="lg:pr-8">
-            <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-800 font-bold text-xs uppercase px-4 py-2 rounded-full mb-4 border border-gray-200 whitespace-nowrap">
+            <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-800 font-bold text-xs uppercase px-4 py-2 rounded-full mb-4 border border-gray-300 whitespace-nowrap">
               <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>
               ABOUT US
             </div>
@@ -127,7 +127,7 @@ export function Experience() {
         </div>
         
         {/* Trusted Partners Section */}
-        <div className="mt-[100px] border border-gray-200 rounded-2xl py-6 px-8 flex flex-wrap items-center justify-between gap-8 bg-white shadow-sm">
+        <div className="mt-[100px] border border-gray-300 rounded-2xl py-6 px-8 flex flex-wrap items-center justify-between gap-8 bg-white shadow-sm">
           <div className="font-bold text-gray-900 text-lg flex-shrink-0">
             Your Trusted Partner:
           </div>

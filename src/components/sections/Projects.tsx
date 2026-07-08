@@ -50,7 +50,7 @@ export function Projects() {
         {/* Header Area */}
         <div className="flex flex-col lg:flex-row justify-between items-end gap-8 mb-16">
           <div className="max-w-xl">
-            <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-800 font-bold text-xs uppercase px-4 py-2 rounded-full mb-4 border border-gray-200 whitespace-nowrap">
+            <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-800 font-bold text-xs uppercase px-4 py-2 rounded-full mb-4 border border-gray-300 whitespace-nowrap">
               <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm2-4h12v2H6zm14 8H4c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2zM4 20v-8h16v8H4z"/></svg>
               OUR PROJECTS
             </div>
