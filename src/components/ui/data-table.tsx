@@ -95,23 +95,23 @@ export function DataTable<T>({
   return (
     <div className="space-y-4">
       {/* Search & Page Size Controls */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-        <div className="relative flex-1 max-w-lg">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="relative flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center overflow-hidden transition-all focus-within:border-slate-300 focus-within:shadow-md w-full sm:max-w-lg">
+          <Search className="w-5 h-5 text-slate-400 ml-4 shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => { setQuery(e.target.value); setPage(1); }}
             placeholder={searchPlaceholder}
-            className="w-full h-11 pl-10 pr-4 text-[14px] border border-gray-200 rounded-lg bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none placeholder:text-gray-400 transition-all shadow-sm"
+            className="border-0 shadow-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none text-[14px] sm:text-base h-12 w-full bg-transparent px-4 placeholder:text-slate-400"
           />
         </div>
-        <div className="flex items-center gap-2 text-[13px] text-gray-500 shrink-0">
+        <div className="flex items-center gap-3 text-sm font-semibold text-slate-700 shrink-0">
           <span>Rows per page:</span>
           <select
             value={pageSize}
             onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-            className="h-9 px-2 border border-gray-200 rounded-lg text-[13px] bg-white focus:border-primary outline-none cursor-pointer shadow-sm"
+            className="h-12 px-4 rounded-xl border border-slate-200 shadow-sm bg-white focus:outline-none focus:ring-0 focus:border-slate-300 cursor-pointer transition-all hover:shadow-md text-sm"
           >
             {PAGE_SIZE_OPTIONS.map((s) => (
               <option key={s} value={s}>{s}</option>
