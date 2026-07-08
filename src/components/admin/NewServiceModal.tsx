@@ -92,7 +92,7 @@ export function NewServiceModal() {
                   type="text"
                   placeholder="e.g. Oil Change, Brake Inspection..."
                   {...register("name")}
-                  className="w-full h-[50px] px-4 text-[15px] border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder:text-gray-400 bg-white transition-all"
+                  className="w-full h-[50px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder:text-gray-400 bg-white transition-all"
                 />
                 {errors.name && (
                   <p className="text-red-500 text-[13px] mt-1.5">{errors.name.message}</p>
@@ -106,7 +106,7 @@ export function NewServiceModal() {
                 <textarea
                   placeholder="Brief description of the service..."
                   {...register("description")}
-                  className="w-full h-28 p-4 text-[15px] border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder:text-gray-400 bg-white resize-none transition-all"
+                  className="w-full h-28 p-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder:text-gray-400 bg-white resize-none transition-all"
                 />
               </div>
 
@@ -115,7 +115,7 @@ export function NewServiceModal() {
                 <button
                   type="button"
                   onClick={close}
-                  className="px-6 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-800 border border-gray-200 hover:border-gray-300 rounded-none uppercase tracking-wider transition-all"
+                  className="px-6 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-800 border border-gray-300 hover:border-gray-300 rounded-none uppercase tracking-wider transition-all"
                 >
                   Cancel
                 </button>

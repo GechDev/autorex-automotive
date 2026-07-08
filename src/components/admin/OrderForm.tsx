@@ -114,7 +114,7 @@ export function OrderForm({
             options={customerOptions}
             placeholder="Select a customer..."
             emptyText="No customers found."
-            triggerClassName="h-[52px] border-gray-200 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
+            triggerClassName="h-[52px] border-gray-300 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
           />
         </div>
 
@@ -127,7 +127,7 @@ export function OrderForm({
             placeholder="Select a vehicle..."
             emptyText={customerId ? "No vehicles found." : "Please select a customer first."}
             disabled={!customerId}
-            triggerClassName="h-[52px] border-gray-200 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
+            triggerClassName="h-[52px] border-gray-300 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
           />
           {customerId && filteredVehicles.length === 0 && (
             <p className="text-sm text-yellow-600 mt-1">This customer has no vehicles. Please add a vehicle first.</p>
@@ -142,7 +142,7 @@ export function OrderForm({
             options={employeeOptions}
             placeholder="Select an employee..."
             emptyText="No employees found."
-            triggerClassName="h-[52px] border-gray-200 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
+            triggerClassName="h-[52px] border-gray-300 rounded-sm focus-within:ring-primary focus-within:border-primary bg-white"
           />
         </div>
 
@@ -152,7 +152,7 @@ export function OrderForm({
             type="number" 
             min="0"
             step="0.01"
-            className="w-full h-[52px] px-4 text-[15px] border-gray-200 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary bg-white"
+            className="w-full h-[52px] px-4 text-[15px] border-gray-300 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary bg-white"
             value={totalPrice}
             onChange={(e) => setTotalPrice(e.target.value)}
             placeholder="0.00"
@@ -162,14 +162,14 @@ export function OrderForm({
 
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-2">Select Services</label>
-        <div className="border border-gray-200 rounded-sm bg-white overflow-hidden flex flex-col focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
-          <div className="p-3 border-b border-gray-200 bg-gray-50/50">
+        <div className="border border-gray-300 rounded-sm bg-white overflow-hidden flex flex-col focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+          <div className="p-3 border-b border-gray-300 bg-gray-50/50">
             <input 
               type="text" 
               placeholder="Search services..." 
               value={serviceSearchQuery}
               onChange={(e) => setServiceSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 text-[14px] bg-white border border-gray-200 rounded-sm focus:border-primary focus:outline-none placeholder:text-gray-400"
+              className="w-full px-3 py-2 text-[14px] bg-white border border-gray-300 rounded-sm focus:border-primary focus:outline-none placeholder:text-gray-400"
             />
           </div>
           <div className="p-4 max-h-[240px] overflow-y-auto">

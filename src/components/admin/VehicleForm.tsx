@@ -7,7 +7,7 @@ import { createVehicle } from "@/lib/actions/vehicles";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 
-export function VehicleForm({ customerId, onCancel }: { customerId: number, onCancel: () => void }) {
+export function VehicleForm({ customerId, onCancel }: { customerId: number, onCancel?: () => void }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,7 +53,7 @@ export function VehicleForm({ customerId, onCancel }: { customerId: number, onCa
   };
 
   return (
-    <form className="space-y-4 bg-gray-50 p-6 border border-gray-200 rounded-sm mt-4" onSubmit={onSubmit}>
+    <form className="space-y-4 bg-gray-50 p-6 border border-gray-300 rounded-sm mt-4" onSubmit={onSubmit}>
       <h3 className="font-heading font-bold text-xl text-[#001659] mb-4">Add a new vehicle</h3>
       
       {error && (
@@ -73,11 +73,11 @@ export function VehicleForm({ customerId, onCancel }: { customerId: number, onCa
         <Input name="color" placeholder="Color" value={formData.color} onChange={handleChange} required />
       </div>
 
-      <div className="flex gap-4 pt-2">
+      <div className="flex flex-col sm:flex-row gap-4 pt-2">
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="bg-primary hover:bg-[#c90a07] text-white px-6 py-2 rounded-none font-bold text-[14px] uppercase tracking-wider"
+          className="w-full sm:w-auto bg-primary hover:bg-[#c90a07] text-white px-6 py-2 rounded-none font-bold text-[14px] uppercase tracking-wider"
         >
           {isSubmitting ? "SAVING..." : "ADD VEHICLE"}
         </Button>
@@ -85,7 +85,7 @@ export function VehicleForm({ customerId, onCancel }: { customerId: number, onCa
           type="button" 
           onClick={handleCancel}
           variant="outline"
-          className="px-6 py-2 rounded-none font-bold text-[14px] uppercase tracking-wider"
+          className="w-full sm:w-auto px-6 py-2 rounded-none font-bold text-[14px] uppercase tracking-wider"
         >
           CANCEL
         </Button>

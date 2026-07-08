@@ -60,7 +60,7 @@ export function DeleteEmployeeButton({ employeeId }: { employeeId: number }) {
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-6 flex sm:justify-center gap-3">
           <AlertDialogCancel asChild>
-            <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase">
+            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase">
               Cancel
             </Button>
           </AlertDialogCancel>

@@ -16,20 +16,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { CommonService } from "@prisma/client";
 
-export function ServiceCard({ service, tableMode = false }: { service: any; tableMode?: boolean }) {
+export function ServiceCard({ service, tableMode = false }: { service: CommonService; tableMode?: boolean }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [name, setName] = useState(service.service_name);
-  const [description, setDescription] = useState(service.service_description || "");
+  const [name, setName] = useState(service.name);
+  const [description, setDescription] = useState(service.description || "");
 
   const handleSave = async () => {
     if (!name.trim()) return toast.error("Name is required");
     setIsSaving(true);
-    const res = await updateService(service.service_id.toString(), { name, description });
+    const res = await updateService(service.id.toString(), { name, description });
     setIsSaving(false);
     if (res.success) {
       toast.success("Service updated successfully!");
@@ -45,7 +46,7 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
 
   const confirmDelete = async () => {
     setIsDeleting(true);
-    const res = await deleteService(service.service_id.toString());
+    const res = await deleteService(service.id.toString());
     setIsDeleting(false);
     setShowDeleteModal(false);
     if (res.success) {
@@ -73,14 +74,14 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
               <div className="px-8 py-6 space-y-5">
                 <div>
                   <label className="block text-[13px] font-bold text-gray-700 mb-2 uppercase tracking-wide">Service Name <span className="text-primary">*</span></label>
-                  <Input value={name} onChange={(e) => setName(e.target.value)} className="border-gray-200 focus:border-primary" placeholder="Service name" autoFocus />
+                  <Input value={name} onChange={(e) => setName(e.target.value)} className="border-gray-300 focus:border-primary" placeholder="Service name" autoFocus />
                 </div>
                 <div>
                   <label className="block text-[13px] font-bold text-gray-700 mb-2 uppercase tracking-wide">Description</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full h-28 p-4 text-[15px] text-gray-600 border border-gray-200 rounded-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none transition-all" placeholder="Service description" />
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full h-28 p-4 text-[15px] text-gray-600 border border-gray-300 rounded-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none transition-all" placeholder="Service description" />
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
-                  <button onClick={() => setIsEditing(false)} className="px-6 py-3 text-[14px] font-bold text-gray-500 border border-gray-200 rounded-none uppercase tracking-wider hover:border-gray-300 transition-all">Cancel</button>
+                  <button onClick={() => setIsEditing(false)} className="px-6 py-3 text-[14px] font-bold text-gray-500 border border-gray-300 rounded-none uppercase tracking-wider hover:border-gray-300 transition-all">Cancel</button>
                   <button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 px-8 py-3 text-[14px] font-bold text-white bg-primary hover:bg-[#c90a07] rounded-none uppercase tracking-wider disabled:opacity-70 transition-colors">
                     {isSaving ? <><Loader2 className="w-4 h-4 animate-spin" />Saving...</> : "Save Changes"}
                   </button>
@@ -118,12 +119,12 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
               </div>
               <AlertDialogTitle className="font-heading font-bold text-[24px] text-center text-[#001659]">Delete Service</AlertDialogTitle>
               <AlertDialogDescription className="text-center text-gray-500 text-[15px]">
-                Are you sure you want to delete <strong className="text-gray-900">{service.service_name}</strong>? This action cannot be undone.
+                Are you sure you want to delete <strong className="text-gray-900">{service.name}</strong>? This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="mt-6 flex sm:justify-center gap-3">
               <AlertDialogCancel asChild>
-                <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase">Cancel</Button>
+                <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase">Cancel</Button>
               </AlertDialogCancel>
               <Button onClick={(e) => { e.preventDefault(); confirmDelete(); }} disabled={isDeleting} className="bg-red-600 hover:bg-red-700 text-white rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase border-0">
                 {isDeleting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Deleting...</> : "Delete"}
@@ -142,14 +143,14 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
         <Input 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
-          className="font-heading font-bold text-[18px] border-gray-200 focus:border-primary"
+          className="font-heading font-bold text-[18px] border-gray-300 focus:border-primary"
           placeholder="Service Name"
           autoFocus
         />
         <textarea 
           value={description} 
           onChange={(e) => setDescription(e.target.value)} 
-          className="w-full flex-1 p-3 text-[14px] text-gray-600 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none transition-all"
+          className="w-full flex-1 p-3 text-[14px] text-gray-600 border border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none transition-all"
           placeholder="Detailed Description"
         />
         <div className="flex justify-end gap-3 mt-1 shrink-0">
@@ -172,7 +173,7 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
   }
 
   return (
-    <div className="group relative flex flex-col justify-between p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] hover:border-gray-200 transition-all duration-300 h-full">
+    <div className="group relative flex flex-col justify-between p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] hover:border-gray-300 transition-all duration-300 h-full">
       
       {/* Decorative Icon Background */}
       <div className="absolute top-6 right-6 p-3 bg-gray-50 rounded-full group-hover:bg-red-50 group-hover:scale-110 transition-all duration-300">
@@ -180,9 +181,9 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
       </div>
 
       <div className="flex-1 pr-14 mb-6">
-        <h4 className="font-heading font-bold text-[20px] text-[#001659] mb-3 leading-tight group-hover:text-primary transition-colors">{service.service_name}</h4>
+        <h4 className="font-heading font-bold text-[20px] text-[#001659] mb-3 leading-tight group-hover:text-primary transition-colors">{service.name}</h4>
         <p className="text-gray-500 text-[14px] leading-relaxed line-clamp-3">
-          {service.service_description}
+          {service.description}
         </p>
       </div>
 
@@ -215,12 +216,12 @@ export function ServiceCard({ service, tableMode = false }: { service: any; tabl
               Delete Service
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center text-gray-500 text-[15px]">
-              Are you sure you want to delete <strong className="text-gray-900">{service.service_name}</strong>? This action cannot be undone.
+              Are you sure you want to delete <strong className="text-gray-900">{service.name}</strong>? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6 flex sm:justify-center gap-3">
             <AlertDialogCancel asChild>
-              <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase">
+              <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-none h-11 px-8 font-bold text-sm tracking-wider uppercase">
                 Cancel
               </Button>
             </AlertDialogCancel>

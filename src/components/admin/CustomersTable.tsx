@@ -24,7 +24,7 @@ function ActiveBadge({ active }: { active: number }) {
       Active
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-500 text-[12px] font-semibold rounded-full border border-gray-200">
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-500 text-[12px] font-semibold rounded-full border border-gray-300">
       <span className="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block" />
       Inactive
     </span>

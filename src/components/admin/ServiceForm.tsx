@@ -60,7 +60,7 @@ export function ServiceForm() {
           type="text" 
           placeholder="Service name" 
           {...register("name")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
       </div>
@@ -69,7 +69,7 @@ export function ServiceForm() {
         <textarea 
           placeholder="Service description" 
           {...register("description")}
-          className="w-full h-32 p-4 text-[15px] border-gray-200 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white resize-none"
+          className="w-full h-32 p-4 text-[15px] border-gray-300 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white resize-none"
         />
       </div>
 

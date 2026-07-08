@@ -15,8 +15,8 @@ const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   phone: z.string().optional(),
-  role: z.enum(["Admin", "Manager", "Employee"]),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.enum(["ADMIN", "ADVISOR", "TECHNICIAN", "CASHIER"]),
+  password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -44,7 +44,7 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      role: "Employee",
+      role: "TECHNICIAN",
     },
   });
 
@@ -55,9 +55,14 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
     let result;
     if (employeeId) {
       if (!data.password) delete (data as any).password;
-      result = await updateEmployee(employeeId.toString(), data);
+      result = await updateEmployee(employeeId.toString(), data as any);
     } else {
-      result = await createEmployee(data);
+      if (!data.password) {
+         setError("Password is required for new employees");
+         setIsSubmitting(false);
+         return;
+      }
+      result = await createEmployee(data as any);
     }
 
     if (!result.success) {
@@ -67,7 +72,7 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
       setIsSubmitting(false);
     } else {
       toast.success(`Employee ${employeeId ? 'updated' : 'created'} successfully!`);
-      router.push("/admin/employees");
+      router.push("/admin/staff");
       router.refresh();
     }
   };
@@ -85,7 +90,7 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
           type="email" 
           placeholder="Employee email" 
           {...register("email")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
       </div>
@@ -95,7 +100,7 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
           type="text" 
           placeholder="Employee first name" 
           {...register("firstName")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
       </div>
@@ -105,7 +110,7 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
           type="text" 
           placeholder="Employee last name" 
           {...register("lastName")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
       </div>
@@ -115,18 +120,19 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
           type="text" 
           placeholder="Employee phone (555-555-5555)" 
           {...register("phone")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
       </div>
 
       <div>
         <select 
           {...register("role")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary text-gray-900 bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border-gray-300 border rounded-sm focus:border-primary focus:ring-1 focus:ring-primary text-gray-900 bg-white"
         >
-          <option value="Employee">Employee</option>
-          <option value="Manager">Manager</option>
-          <option value="Admin">Admin</option>
+          <option value="TECHNICIAN">Technician</option>
+          <option value="ADVISOR">Service Advisor</option>
+          <option value="CASHIER">Cashier</option>
+          <option value="ADMIN">Administrator</option>
         </select>
         {errors.role && <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>}
       </div>
@@ -134,9 +140,9 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
       <div>
         <Input 
           type="password" 
-          placeholder="Employee password" 
+          placeholder={employeeId ? "Leave blank to keep unchanged" : "Employee password"} 
           {...register("password")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
       </div>
@@ -145,7 +151,7 @@ export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
+          className="w-full sm:w-auto bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
         >
           {isSubmitting ? "SAVING..." : employeeId ? "UPDATE EMPLOYEE" : "ADD EMPLOYEE"}
         </Button>

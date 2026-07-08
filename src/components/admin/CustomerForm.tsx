@@ -78,7 +78,7 @@ export function CustomerForm({
           type="email" 
           placeholder="Customer email" 
           {...register("email")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
       </div>
@@ -88,7 +88,7 @@ export function CustomerForm({
           type="text" 
           placeholder="Customer first name" 
           {...register("firstName")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
       </div>
@@ -98,7 +98,7 @@ export function CustomerForm({
           type="text" 
           placeholder="Customer last name" 
           {...register("lastName")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
       </div>
@@ -108,7 +108,7 @@ export function CustomerForm({
           type="text" 
           placeholder="Customer phone (555-555-5555)" 
           {...register("phone")}
-          className="w-full h-[52px] px-4 text-[15px] border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
+          className="w-full h-[52px] px-4 text-[15px] border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 italic bg-white"
         />
         {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
       </div>
@@ -117,7 +117,7 @@ export function CustomerForm({
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
+          className="w-full sm:w-auto bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
         >
           {isSubmitting ? (isEditMode ? "UPDATING..." : "ADDING...") : (isEditMode ? "UPDATE CUSTOMER" : "ADD CUSTOMER")}
         </Button>
