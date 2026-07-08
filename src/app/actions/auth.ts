@@ -16,7 +16,12 @@ export async function loginAction(data: LoginInput) {
       redirect: false,
     });
 
-    return { success: true };
+    const employee = await prisma.employee.findUnique({
+      where: { email: validatedData.email },
+      select: { role: true }
+    });
+
+    return { success: true, role: employee?.role };
   } catch (error: any) {
     console.error("Login Error:", error);
     
@@ -54,12 +59,12 @@ export async function registerAction(data: RegisterInput) {
     const passwordHash = await bcrypt.hash(validatedData.password, 12);
 
     let employeeRole = await prisma.companyRole.findUnique({
-      where: { company_role_name: "Employee" }
+      where: { company_role_name: "Customer" }
     });
 
     if (!employeeRole) {
       employeeRole = await prisma.companyRole.create({
-        data: { company_role_name: "Employee" }
+        data: { company_role_name: "Customer" }
       });
     }
 
