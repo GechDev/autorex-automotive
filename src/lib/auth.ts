@@ -43,22 +43,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const { email, password } = parsed.data;
         const employee = await prisma.employee.findUnique({
-          where: { employee_email: email },
-          include: { pass: true, roles: { include: { role: true } }, info: true }
+          where: { email }
         });
 
-        if (!employee || !employee.pass?.employee_password_hashed) return null;
+        if (!employee || !employee.passwordHash) return null;
+        if (!employee.isActive) return null;
 
-        const valid = await bcrypt.compare(password, employee.pass.employee_password_hashed);
+        const valid = await bcrypt.compare(password, employee.passwordHash);
         if (!valid) return null;
 
-        const roleName = employee.roles[0]?.role?.company_role_name || "Employee";
-
         return {
-          id: employee.employee_id.toString(),
-          email: employee.employee_email,
-          name: `${employee.info?.employee_first_name || ''} ${employee.info?.employee_last_name || ''}`.trim(),
-          role: roleName,
+          id: employee.id.toString(),
+          email: employee.email,
+          name: `${employee.firstName} ${employee.lastName}`.trim(),
+          role: employee.role,
         };
       },
     }),

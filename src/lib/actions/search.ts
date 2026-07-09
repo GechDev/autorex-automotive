@@ -6,41 +6,33 @@ import { ComboboxOption } from "@/components/ui/combobox";
 export async function searchCustomers(query: string): Promise<ComboboxOption[]> {
   const searchTerm = query.trim();
   if (!searchTerm) {
-    const customers = await prisma.customerIdentifier.findMany({
+    const customers = await prisma.customer.findMany({
       take: 10,
-      orderBy: { customer_added_date: "desc" },
-      include: { info: true },
+      orderBy: { addedDate: "desc" },
     });
     return customers.map(c => ({
-      value: c.customer_id.toString(),
-      label: `${c.info?.customer_first_name} ${c.info?.customer_last_name}`,
-      subLabel: `${c.customer_phone_number || ""} ${c.customer_email || ""}`.trim() || "No contact info",
+      value: c.id.toString(),
+      label: `${c.firstName} ${c.lastName}`,
+      subLabel: `${c.phoneNumber || ""} ${c.email || ""}`.trim() || "No contact info",
     }));
   }
 
-  const customers = await prisma.customerIdentifier.findMany({
+  const customers = await prisma.customer.findMany({
     where: {
       OR: [
-        { customer_email: { contains: searchTerm, mode: "insensitive" } },
-        { customer_phone_number: { contains: searchTerm, mode: "insensitive" } },
-        {
-          info: {
-            OR: [
-              { customer_first_name: { contains: searchTerm, mode: "insensitive" } },
-              { customer_last_name: { contains: searchTerm, mode: "insensitive" } },
-            ]
-          }
-        }
+        { email: { contains: searchTerm, mode: "insensitive" } },
+        { phoneNumber: { contains: searchTerm, mode: "insensitive" } },
+        { firstName: { contains: searchTerm, mode: "insensitive" } },
+        { lastName: { contains: searchTerm, mode: "insensitive" } },
       ]
     },
     take: 20,
-    include: { info: true },
   });
 
   return customers.map(c => ({
-    value: c.customer_id.toString(),
-    label: `${c.info?.customer_first_name} ${c.info?.customer_last_name}`,
-    subLabel: `${c.customer_phone_number || ""} ${c.customer_email || ""}`.trim() || "No contact info",
+    value: c.id.toString(),
+    label: `${c.firstName} ${c.lastName}`,
+    subLabel: `${c.phoneNumber || ""} ${c.email || ""}`.trim() || "No contact info",
   }));
 }
 
@@ -49,39 +41,31 @@ export async function searchEmployees(query: string): Promise<ComboboxOption[]> 
   if (!searchTerm) {
     const employees = await prisma.employee.findMany({
       take: 10,
-      orderBy: { added_date: "desc" },
-      include: { info: true },
+      orderBy: { addedDate: "desc" },
     });
     return employees.map(e => ({
-      value: e.employee_id.toString(),
-      label: `${e.info?.employee_first_name} ${e.info?.employee_last_name}`,
-      subLabel: `ID: ${e.employee_id} | Phone: ${e.info?.employee_phone || "N/A"}`
+      value: e.id.toString(),
+      label: `${e.firstName} ${e.lastName}`,
+      subLabel: `ID: ${e.id} | Phone: ${e.phoneNumber || "N/A"}`
     }));
   }
 
   const employees = await prisma.employee.findMany({
     where: {
       OR: [
-        { employee_email: { contains: searchTerm, mode: "insensitive" } },
-        {
-          info: {
-            OR: [
-              { employee_first_name: { contains: searchTerm, mode: "insensitive" } },
-              { employee_last_name: { contains: searchTerm, mode: "insensitive" } },
-              { employee_phone: { contains: searchTerm, mode: "insensitive" } },
-            ]
-          }
-        }
+        { email: { contains: searchTerm, mode: "insensitive" } },
+        { firstName: { contains: searchTerm, mode: "insensitive" } },
+        { lastName: { contains: searchTerm, mode: "insensitive" } },
+        { phoneNumber: { contains: searchTerm, mode: "insensitive" } },
       ]
     },
     take: 20,
-    include: { info: true },
   });
 
   return employees.map(e => ({
-    value: e.employee_id.toString(),
-    label: `${e.info?.employee_first_name} ${e.info?.employee_last_name}`,
-    subLabel: `ID: ${e.employee_id} | Phone: ${e.info?.employee_phone || "N/A"}`
+    value: e.id.toString(),
+    label: `${e.firstName} ${e.lastName}`,
+    subLabel: `ID: ${e.id} | Phone: ${e.phoneNumber || "N/A"}`
   }));
 }
 
@@ -90,41 +74,41 @@ export async function searchVehicles(query: string, customerId?: string): Promis
   
   const baseWhere: any = {};
   if (customerId) {
-    baseWhere.customer_id = parseInt(customerId);
+    baseWhere.customerId = parseInt(customerId);
   }
 
   if (!searchTerm) {
-    const vehicles = await prisma.customerVehicleInfo.findMany({
+    const vehicles = await prisma.vehicle.findMany({
       where: baseWhere,
       take: 10,
-      orderBy: { vehicle_id: "desc" },
-      include: { customer: { include: { info: true } } },
+      orderBy: { id: "desc" },
+      include: { customer: true },
     });
     return vehicles.map(v => ({
-      value: v.vehicle_id.toString(),
-      label: `${v.vehicle_tag} - ${v.vehicle_make} ${v.vehicle_model}`,
-      subLabel: v.customer ? `Owner: ${v.customer.info?.customer_first_name} ${v.customer.info?.customer_last_name}` : undefined,
+      value: v.id.toString(),
+      label: `${v.licensePlate} - ${v.make} ${v.model}`,
+      subLabel: v.customer ? `Owner: ${v.customer.firstName} ${v.customer.lastName}` : undefined,
     }));
   }
 
-  const vehicles = await prisma.customerVehicleInfo.findMany({
+  const vehicles = await prisma.vehicle.findMany({
     where: {
       ...baseWhere,
       OR: [
-        { vehicle_tag: { contains: searchTerm, mode: "insensitive" } },
-        { vehicle_make: { contains: searchTerm, mode: "insensitive" } },
-        { vehicle_model: { contains: searchTerm, mode: "insensitive" } },
-        { vehicle_serial: { contains: searchTerm, mode: "insensitive" } },
+        { licensePlate: { contains: searchTerm, mode: "insensitive" } },
+        { make: { contains: searchTerm, mode: "insensitive" } },
+        { model: { contains: searchTerm, mode: "insensitive" } },
+        { vin: { contains: searchTerm, mode: "insensitive" } },
       ]
     },
     take: 20,
-    include: { customer: { include: { info: true } } },
+    include: { customer: true },
   });
 
   return vehicles.map(v => ({
-    value: v.vehicle_id.toString(),
-    label: `${v.vehicle_tag} - ${v.vehicle_make} ${v.vehicle_model}`,
-    subLabel: v.customer ? `Owner: ${v.customer.info?.customer_first_name} ${v.customer.info?.customer_last_name}` : undefined,
+    value: v.id.toString(),
+    label: `${v.licensePlate} - ${v.make} ${v.model}`,
+    subLabel: v.customer ? `Owner: ${v.customer.firstName} ${v.customer.lastName}` : undefined,
   }));
 }
 
@@ -133,11 +117,11 @@ export async function searchServices(query: string): Promise<ComboboxOption[]> {
   if (!searchTerm) {
     const services = await prisma.commonService.findMany({
       take: 10,
-      orderBy: { service_name: "asc" },
+      orderBy: { name: "asc" },
     });
     return services.map(s => ({
-      value: s.service_id.toString(),
-      label: s.service_name,
+      value: s.id.toString(),
+      label: s.name,
       subLabel: undefined,
     }));
   }
@@ -145,17 +129,54 @@ export async function searchServices(query: string): Promise<ComboboxOption[]> {
   const services = await prisma.commonService.findMany({
     where: {
       OR: [
-        { service_name: { contains: searchTerm, mode: "insensitive" } },
-        { service_description: { contains: searchTerm, mode: "insensitive" } },
+        { name: { contains: searchTerm, mode: "insensitive" } },
+        { description: { contains: searchTerm, mode: "insensitive" } },
       ]
     },
     take: 20,
-    orderBy: { service_name: "asc" },
+    orderBy: { name: "asc" },
   });
 
   return services.map(s => ({
-    value: s.service_id.toString(),
-    label: s.service_name,
+    value: s.id.toString(),
+    label: s.name,
     subLabel: undefined,
+  }));
+}
+
+export async function searchTechnicians(query: string): Promise<ComboboxOption[]> {
+  const searchTerm = query.trim();
+  
+  const baseWhere: any = { role: "TECHNICIAN", isActive: true };
+  
+  if (!searchTerm) {
+    const techs = await prisma.employee.findMany({
+      where: baseWhere,
+      take: 10,
+      orderBy: { firstName: "asc" },
+    });
+    return techs.map(t => ({
+      value: t.id.toString(),
+      label: `${t.firstName} ${t.lastName}`,
+      subLabel: t.phoneNumber ? `Phone: ${t.phoneNumber}` : `ID: ${t.id}`,
+    }));
+  }
+
+  const techs = await prisma.employee.findMany({
+    where: {
+      ...baseWhere,
+      OR: [
+        { firstName: { contains: searchTerm, mode: "insensitive" } },
+        { lastName: { contains: searchTerm, mode: "insensitive" } },
+        { phoneNumber: { contains: searchTerm, mode: "insensitive" } },
+      ]
+    },
+    take: 20,
+  });
+
+  return techs.map(t => ({
+    value: t.id.toString(),
+    label: `${t.firstName} ${t.lastName}`,
+    subLabel: t.phoneNumber ? `Phone: ${t.phoneNumber}` : `ID: ${t.id}`,
   }));
 }

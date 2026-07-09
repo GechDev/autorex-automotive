@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { requireRole } from "@/lib/auth-utils";
 
 const customerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -15,28 +16,28 @@ export type CustomerFormData = z.infer<typeof customerSchema>;
 
 export async function createCustomer(
   data: CustomerFormData
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; customerId?: number; customerName?: string }> {
+  await requireRole(["ADMIN", "ADVISOR", "CASHIER"]);
   const parsed = customerSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
   }
   try {
-    await prisma.customerIdentifier.create({ 
+    const customer = await prisma.customer.create({ 
       data: {
-        customer_email: parsed.data.email,
-        customer_phone_number: parsed.data.phone,
-        customer_hash: Math.random().toString(36).substring(2, 15), // Basic placeholder for hash
-        info: {
-          create: {
-            customer_first_name: parsed.data.firstName,
-            customer_last_name: parsed.data.lastName,
-            active_customer_status: 1
-          }
-        }
+        email: parsed.data.email,
+        phoneNumber: parsed.data.phone,
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
       } 
     });
     revalidatePath("/admin/customers");
-    return { success: true };
+    revalidatePath("/advisor/check-in");
+    return { 
+      success: true, 
+      customerId: customer.id,
+      customerName: `${customer.firstName} ${customer.lastName}`,
+    };
   } catch (error) {
     console.error("Failed to create customer:", error);
     return { success: false, error: "Failed to create customer. Email may already exist." };
@@ -47,21 +48,16 @@ export async function updateCustomer(
   id: string,
   data: Partial<CustomerFormData>
 ): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN", "ADVISOR", "CASHIER"]);
   try {
     const numId = parseInt(id);
-    await prisma.customerIdentifier.update({ 
-      where: { customer_id: numId }, 
+    await prisma.customer.update({ 
+      where: { id: numId }, 
       data: {
-        ...(data.email && { customer_email: data.email }),
-        ...(data.phone && { customer_phone_number: data.phone }),
-        ...( (data.firstName || data.lastName) && {
-          info: {
-            update: {
-              ...(data.firstName && { customer_first_name: data.firstName }),
-              ...(data.lastName && { customer_last_name: data.lastName }),
-            }
-          }
-        })
+        ...(data.email && { email: data.email }),
+        ...(data.phone && { phoneNumber: data.phone }),
+        ...(data.firstName && { firstName: data.firstName }),
+        ...(data.lastName && { lastName: data.lastName }),
       } 
     });
     revalidatePath("/admin/customers");
@@ -76,10 +72,10 @@ export async function updateCustomer(
 export async function deleteCustomer(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN", "ADVISOR"]);
   try {
     const numId = parseInt(id);
-    await prisma.customerInfo.deleteMany({ where: { customer_id: numId } });
-    await prisma.customerIdentifier.delete({ where: { customer_id: numId } });
+    await prisma.customer.delete({ where: { id: numId } });
     revalidatePath("/admin/customers");
     return { success: true };
   } catch (error) {

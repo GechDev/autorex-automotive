@@ -2,6 +2,8 @@
 
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/auth-utils";
+import { revalidatePath } from "next/cache";
 
 const appointmentSchema = z.object({
   customerName: z.string().min(2),
@@ -23,14 +25,7 @@ export async function createAppointment(data: AppointmentFormData): Promise<{ su
   }
   
   try {
-    let sId = undefined;
-    if (parsed.data.serviceId) {
-      const parsedServiceId = parseInt(parsed.data.serviceId);
-      if (!isNaN(parsedServiceId)) {
-        sId = parsedServiceId;
-      }
-    }
-
+    // Note: serviceId is removed from the model so we don't save it anymore
     await prisma.appointment.create({
       data: {
         customerName: parsed.data.customerName,
@@ -40,7 +35,6 @@ export async function createAppointment(data: AppointmentFormData): Promise<{ su
         preferredDate: parsed.data.preferredDate,
         preferredTime: parsed.data.preferredTime,
         message: parsed.data.message || "",
-        ...(sId && { serviceId: sId })
       }
     });
 
@@ -48,5 +42,53 @@ export async function createAppointment(data: AppointmentFormData): Promise<{ su
   } catch (error) {
     console.error("Failed to create appointment:", error);
     return { success: false, error: "Failed to create appointment." };
+  }
+}
+
+export async function getAppointments() {
+  await requireRole(["ADMIN", "ADVISOR"]);
+  try {
+    const appointments = await prisma.appointment.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    return appointments;
+  } catch (error) {
+    console.error("Failed to fetch appointments:", error);
+    return [];
+  }
+}
+
+export async function updateAppointmentStatus(id: number, status: string): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN", "ADVISOR"]);
+  
+  const validStatuses = ["PENDING", "APPROVED", "COMPLETED", "CANCELLED"];
+  if (!validStatuses.includes(status)) {
+    return { success: false, error: "Invalid status" };
+  }
+
+  try {
+    await prisma.appointment.update({
+      where: { id },
+      data: { status }
+    });
+    revalidatePath("/admin/appointments");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update appointment:", error);
+    return { success: false, error: "Failed to update appointment" };
+  }
+}
+
+export async function deleteAppointment(id: number): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN"]);
+  try {
+    await prisma.appointment.delete({
+      where: { id }
+    });
+    revalidatePath("/admin/appointments");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete appointment:", error);
+    return { success: false, error: "Failed to delete appointment" };
   }
 }

@@ -4,13 +4,14 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { requireRole } from "@/lib/auth-utils";
 
 const employeeSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   phone: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  role: z.enum(["Admin", "Manager", "Employee"]),
+  role: z.enum(["ADMIN", "ADVISOR", "TECHNICIAN", "CASHIER"]),
   password: z.string().min(6, "Password must be at least 6 characters").optional(),
 });
 
@@ -19,6 +20,7 @@ export type EmployeeFormData = z.infer<typeof employeeSchema>;
 export async function createEmployee(
   data: EmployeeFormData
 ): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN"]); // Only Admins can create employees
   const parsed = employeeSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message || "Validation failed" };
@@ -29,40 +31,18 @@ export async function createEmployee(
   try {
     const passwordHash = await bcrypt.hash(parsed.data.password, 10);
     
-    let companyRole = await prisma.companyRole.findUnique({
-      where: { company_role_name: parsed.data.role }
-    });
-
-    if (!companyRole) {
-      companyRole = await prisma.companyRole.create({
-        data: { company_role_name: parsed.data.role }
-      });
-    }
-
     await prisma.employee.create({
       data: {
-        employee_email: parsed.data.email,
-        active_employee: 1,
-        info: {
-          create: {
-            employee_first_name: parsed.data.firstName,
-            employee_last_name: parsed.data.lastName,
-            employee_phone: parsed.data.phone || "",
-          }
-        },
-        pass: {
-          create: {
-            employee_password_hashed: passwordHash,
-          }
-        },
-        roles: {
-          create: {
-            company_role_id: companyRole.company_role_id,
-          }
-        }
+        email: parsed.data.email,
+        passwordHash,
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
+        phoneNumber: parsed.data.phone || null,
+        role: parsed.data.role,
+        isActive: true,
       },
     });
-    revalidatePath("/admin/employees");
+    revalidatePath("/admin/staff");
     return { success: true };
   } catch (error) {
     console.error("Failed to create employee:", error);
@@ -74,60 +54,26 @@ export async function updateEmployee(
   id: string,
   data: Partial<EmployeeFormData>
 ): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN"]); // Only Admins can update employees
   try {
     let passwordHash = undefined;
     if (data.password) {
       passwordHash = await bcrypt.hash(data.password, 10);
     }
     
-    // Convert logic for updating employee fields
-    const employee = await prisma.employee.findUnique({
-      where: { employee_id: parseInt(id) },
-      include: { info: true }
-    });
-    
-    if (employee) {
-      await prisma.employee.update({
-        where: { employee_id: parseInt(id) },
-        data: {
-          ...(data.email && { employee_email: data.email }),
-          ...( (data.firstName || data.lastName) && {
-            info: {
-              update: {
-                ...(data.firstName && { employee_first_name: data.firstName }),
-                ...(data.lastName && { employee_last_name: data.lastName }),
-              }
-            }
-          }),
-          ...(passwordHash && {
-            pass: {
-              update: {
-                employee_password_hashed: passwordHash
-              }
-            }
-          })
-        }
-      });
-      
-      if (data.role) {
-         const companyRole = await prisma.companyRole.findUnique({
-           where: { company_role_name: data.role }
-         });
-         if (companyRole) {
-           await prisma.employeeRole.deleteMany({
-             where: { employee_id: parseInt(id) }
-           });
-           await prisma.employeeRole.create({
-             data: {
-               employee_id: parseInt(id),
-               company_role_id: companyRole.company_role_id
-             }
-           });
-         }
+    await prisma.employee.update({
+      where: { id: parseInt(id) },
+      data: {
+        ...(data.email && { email: data.email }),
+        ...(data.firstName && { firstName: data.firstName }),
+        ...(data.lastName && { lastName: data.lastName }),
+        ...(data.phone !== undefined && { phoneNumber: data.phone || null }),
+        ...(data.role && { role: data.role }),
+        ...(passwordHash && { passwordHash }),
       }
-    }
-    
-    revalidatePath("/admin/employees");
+    });
+      
+    revalidatePath("/admin/staff");
     return { success: true };
   } catch (error) {
     console.error("Failed to update employee:", error);
@@ -138,16 +84,12 @@ export async function updateEmployee(
 export async function deleteEmployee(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
+  await requireRole(["ADMIN"]); // Only Admins can delete employees
   try {
     const numericId = parseInt(id);
     
-    // First delete associated records manually (if cascading is not set up correctly)
-    await prisma.employeeInfo.deleteMany({ where: { employee_id: numericId } });
-    await prisma.employeePass.deleteMany({ where: { employee_id: numericId } });
-    await prisma.employeeRole.deleteMany({ where: { employee_id: numericId } });
-    
-    await prisma.employee.delete({ where: { employee_id: numericId } });
-    revalidatePath("/admin/employees");
+    await prisma.employee.delete({ where: { id: numericId } });
+    revalidatePath("/admin/staff");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete employee:", error);

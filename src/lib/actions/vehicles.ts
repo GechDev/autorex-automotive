@@ -9,40 +9,44 @@ const vehicleSchema = z.object({
   year: z.number().min(1900).max(new Date().getFullYear() + 1),
   make: z.string().min(1),
   model: z.string().min(1),
-  type: z.string().min(1),
+  type: z.string().optional(),
   mileage: z.number().min(0),
   tag: z.string().min(1),
-  serial: z.string().min(1),
-  color: z.string().min(1),
+  serial: z.string().optional(),
+  color: z.string().optional(),
 });
 
 export type VehicleFormData = z.infer<typeof vehicleSchema>;
 
 export async function createVehicle(
   data: VehicleFormData
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; vehicleId?: number; vehicleLabel?: string }> {
   const parsed = vehicleSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, error: "Validation failed" };
   }
   
   try {
-    await prisma.customerVehicleInfo.create({ 
+    const vehicle = await prisma.vehicle.create({ 
       data: {
-        customer_id: parsed.data.customerId,
-        vehicle_year: parsed.data.year,
-        vehicle_make: parsed.data.make,
-        vehicle_model: parsed.data.model,
-        vehicle_type: parsed.data.type,
-        vehicle_mileage: parsed.data.mileage,
-        vehicle_tag: parsed.data.tag,
-        vehicle_serial: parsed.data.serial,
-        vehicle_color: parsed.data.color,
+        customerId: parsed.data.customerId,
+        year: parsed.data.year,
+        make: parsed.data.make,
+        model: parsed.data.model,
+        mileage: parsed.data.mileage,
+        licensePlate: parsed.data.tag,
+        vin: parsed.data.serial || null,
+        color: parsed.data.color || null,
       } 
     });
     
     revalidatePath(`/admin/customers/${data.customerId}`);
-    return { success: true };
+    revalidatePath("/advisor/check-in");
+    return { 
+      success: true,
+      vehicleId: vehicle.id,
+      vehicleLabel: `${vehicle.licensePlate} - ${vehicle.make} ${vehicle.model}`,
+    };
   } catch (error) {
     console.error("Failed to create vehicle:", error);
     return { success: false, error: "Failed to create vehicle." };
