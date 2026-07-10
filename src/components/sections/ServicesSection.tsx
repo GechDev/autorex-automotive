@@ -39,11 +39,10 @@ export function ServicesSection() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black/95 z-0" />
         
-        <div className="auto-container relative z-10 flex flex-col lg:flex-row justify-between items-start gap-10 px-4">
-          {/* Left Header */}
-          <div className="max-w-xl">
+        <div className="auto-container relative z-10 flex flex-col items-center text-center gap-6 px-4">
+          {/* Header */}
+          <div className="max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-gray-300 font-bold text-xs uppercase px-4 py-2 rounded-full mb-4 border border-white/20 whitespace-nowrap">
-              <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M11.64 5.23L12 3l.36 2.23C12.63 7.15 14.85 9.37 16.77 9.64L19 10l-2.23.36c-1.92.27-4.14 2.49-4.41 4.41L12 17l-.36-2.23c-.27-1.92-2.49-4.14-4.41-4.41L5 10l2.23-.36c1.92-.27 4.14-2.49 4.41-4.41z" /></svg>
               OUR SERVICES
             </div>
             
@@ -53,16 +52,14 @@ export function ServicesSection() {
             </h2>
           </div>
           
-          {/* Right Text & Button */}
-          <div className="max-w-md lg:text-right flex flex-col lg:items-end justify-center">
-            <Link
-              href="/services"
-              className="bg-primary text-white px-8 py-3.5 rounded-full font-bold text-sm transition-transform hover:scale-105 flex items-center gap-2 w-max"
-            >
-              More Services
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </Link>
-          </div>
+          {/* Button */}
+          <Link
+            href="/services"
+            className="bg-primary text-white px-8 py-3.5 rounded-full font-bold text-sm transition-transform hover:scale-105 flex items-center gap-2 w-max mt-2"
+          >
+            More Services
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </Link>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="bg-[#0f0f0f] text-gray-300 relative pt-[200px] mt-[150px]">
       
       {/* Overlapping Newsletter Box */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl px-4 z-10">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl px-4 z-10">
         <div className="bg-[#1a1a1a] rounded-2xl p-10 text-center relative overflow-hidden shadow-2xl">
           {/* Subtle Background overlay */}
           <div 
@@ -19,9 +19,9 @@ export function Footer() {
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-white font-heading font-black text-3xl md:text-4xl mb-4">Subscribe To Our Newsletter</h2>
             <p className="text-gray-400 text-sm mb-8 max-w-lg mx-auto">
-              Get the latest news, updates, and special offers delivered directly to your inbox. We promise not to spam you.
+              Get the latest news, updates, and special offers delivered directly to your inbox.
             </p>
-            <form className="flex flex-col sm:flex-row items-center gap-3 max-w-lg mx-auto">
+            <form className="flex flex-col sm:flex-row items-center gap-3 max-w-2xl mx-auto">
               <input
                 type="email"
                 placeholder="Email Address"
