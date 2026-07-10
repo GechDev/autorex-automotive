@@ -1,56 +1,76 @@
-import { prisma } from '../src/lib/prisma';
+import { PrismaClient, Role } from '../src/generated/prisma';
+import { PrismaPg } from "@prisma/adapter-pg";
+import { config } from "dotenv";
+
+config(); // load .env
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('Seeding roles...');
+  console.log('Seeding initial admin user...');
   
-  await prisma.companyRole.createMany({
-    data: [
-      { company_role_name: 'Employee' },
-      { company_role_name: 'Manager' },
-      { company_role_name: 'Admin' },
-    ],
-    skipDuplicates: true,
-  });
-
-  console.log('Roles seeded.');
-
-  const adminRole = await prisma.companyRole.findUnique({
-    where: { company_role_name: 'Admin' },
-  });
-
-  if (!adminRole) {
-    throw new Error('Admin role not found');
-  }
-
-  console.log('Seeding admin user...');
+  // Note: we would normally hash the password with argon2id/bcrypt here.
+  // We're using a dummy hash for seed purposes.
+  const dummyHash = '$2b$10$P6mgc4x5S16WXNu5dMyyZO0tpLWn8U8339E6AB07qIE5liaHNjuuK'; // "admin123"
 
   const employee = await prisma.employee.upsert({
-    where: { employee_email: 'admin@admin.com' },
-    update: {},
+    where: { email: 'admin@abesgarage.com' },
+    update: { passwordHash: dummyHash },
     create: {
-      employee_email: 'admin@admin.com',
-      active_employee: 1,
-      info: {
-        create: {
-          employee_first_name: 'Admin',
-          employee_last_name: 'Admin',
-          employee_phone: '555-555-5555',
-        },
-      },
-      pass: {
-        create: {
-          employee_password_hashed: '$2b$10$ktYtTOwqzOEiLe67fi0Fj.OxdMQgSBjM/7PXp4GnJEAU/dUSYdKIa',
-        },
-      },
-      roles: {
-        create: {
-          company_role_id: adminRole.company_role_id,
-        },
-      },
+      email: 'admin@abesgarage.com',
+      firstName: 'System',
+      lastName: 'Admin',
+      phoneNumber: '555-555-5555',
+      passwordHash: dummyHash,
+      role: Role.ADMIN,
+      isActive: true,
     },
   });
 
-  console.log('Admin user seeded:', employee);
+  const advisor = await prisma.employee.upsert({
+    where: { email: 'advisor@abesgarage.com' },
+    update: { passwordHash: dummyHash },
+    create: {
+      email: 'advisor@abesgarage.com',
+      firstName: 'Service',
+      lastName: 'Advisor',
+      phoneNumber: '555-555-5556',
+      passwordHash: dummyHash,
+      role: Role.ADVISOR,
+      isActive: true,
+    },
+  });
+
+  const technician = await prisma.employee.upsert({
+    where: { email: 'tech@abesgarage.com' },
+    update: { passwordHash: dummyHash },
+    create: {
+      email: 'tech@abesgarage.com',
+      firstName: 'Master',
+      lastName: 'Technician',
+      phoneNumber: '555-555-5557',
+      passwordHash: dummyHash,
+      role: Role.TECHNICIAN,
+      isActive: true,
+    },
+  });
+
+  const cashier = await prisma.employee.upsert({
+    where: { email: 'cashier@abesgarage.com' },
+    update: { passwordHash: dummyHash },
+    create: {
+      email: 'cashier@abesgarage.com',
+      firstName: 'Checkout',
+      lastName: 'Cashier',
+      phoneNumber: '555-555-5558',
+      passwordHash: dummyHash,
+      role: Role.CASHIER,
+      isActive: true,
+    },
+  });
+
+  console.log('Staff accounts seeded successfully.');
 }
 
 main()

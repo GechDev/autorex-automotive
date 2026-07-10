@@ -10,173 +10,135 @@ datasource db {
   provider = "postgresql"
 }
 
-model CustomerIdentifier {
-  customer_id           Int      @id @default(autoincrement())
-  customer_email        String   @unique
-  customer_phone_number String
-  customer_added_date   DateTime @default(now()) @updatedAt
-  customer_hash         String
-
-  info     CustomerInfo?
-  vehicles CustomerVehicleInfo[]
-  orders   Order[]
-
-  @@map("customer_identifier")
+enum Role {
+  ADMIN
+  ADVISOR
+  TECHNICIAN
+  CASHIER
 }
 
-model CustomerInfo {
-  customer_info_id       Int @id @default(autoincrement())
-  customer_id            Int @unique
-  customer_first_name    String
-  customer_last_name     String
-  active_customer_status Int
-
-  customer CustomerIdentifier @relation(fields: [customer_id], references: [customer_id])
-
-  @@map("customer_info")
+enum OrderStatus {
+  CHECKED_IN
+  INSPECTION
+  PENDING_APPROVAL
+  IN_REPAIR
+  READY_FOR_PAYMENT
+  PAID
+  COMPLETED
 }
 
-model CustomerVehicleInfo {
-  vehicle_id      Int    @id @default(autoincrement())
-  customer_id     Int
-  vehicle_year    Int
-  vehicle_make    String
-  vehicle_model   String
-  vehicle_type    String
-  vehicle_mileage Int
-  vehicle_tag     String
-  vehicle_serial  String
-  vehicle_color   String
-
-  customer CustomerIdentifier @relation(fields: [customer_id], references: [customer_id])
-  orders   Order[]
-
-  @@map("customer_vehicle_info")
+enum PaymentMethod {
+  CASH
+  CARD_POS
+  MOBILE_TRANSFER
 }
 
-model CompanyRole {
-  company_role_id   Int    @id @default(autoincrement())
-  company_role_name String @unique
+model Customer {
+  id           Int      @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phoneNumber  String
+  addedDate    DateTime @default(now())
+  
+  vehicles     Vehicle[]
+  orders       Order[]
 
-  employee_roles EmployeeRole[]
-
-  @@map("company_roles")
+  @@map("customers")
 }
 
-model CommonService {
-  service_id          Int     @id @default(autoincrement())
-  service_name        String
-  service_description String? @db.Text
+model Vehicle {
+  id           Int      @id @default(autoincrement())
+  customerId   Int
+  year         Int
+  make         String
+  model        String
+  mileage      Int
+  licensePlate String
+  vin          String?
+  color        String?
+  
+  customer     Customer @relation(fields: [customerId], references: [id])
+  orders       Order[]
 
-  order_services OrderService[]
-  appointments   Appointment[]
-
-  @@map("common_services")
+  @@map("vehicles")
 }
 
 model Employee {
-  employee_id     Int      @id @default(autoincrement())
-  employee_email  String   @unique
-  active_employee Int
-  added_date      DateTime @default(now()) @updatedAt
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phoneNumber  String?
+  role         Role
+  isActive     Boolean  @default(true)
+  addedDate    DateTime @default(now()) @updatedAt
+  
+  advisedOrders   Order[] @relation("OrderAdvisor")
+  assignedOrders  Order[] @relation("OrderTechnician")
 
-  info     EmployeeInfo?
-  pass     EmployeePass?
-  roles    EmployeeRole[]
-  orders   Order[]
-
-  @@map("employee")
-}
-
-model EmployeeInfo {
-  employee_info_id    Int    @id @default(autoincrement())
-  employee_id         Int    @unique
-  employee_first_name String
-  employee_last_name  String
-  employee_phone      String
-
-  employee Employee @relation(fields: [employee_id], references: [employee_id])
-
-  @@map("employee_info")
-}
-
-model EmployeePass {
-  employee_pass_id         Int    @id @default(autoincrement())
-  employee_id              Int    @unique
-  employee_password_hashed String
-
-  employee Employee @relation(fields: [employee_id], references: [employee_id])
-
-  @@map("employee_pass")
-}
-
-model EmployeeRole {
-  employee_role_id Int @id @default(autoincrement())
-  employee_id      Int
-  company_role_id  Int
-
-  employee Employee    @relation(fields: [employee_id], references: [employee_id])
-  role     CompanyRole @relation(fields: [company_role_id], references: [company_role_id])
-
-  @@map("employee_role")
+  @@map("employees")
 }
 
 model Order {
-  order_id     Int      @id @default(autoincrement())
-  employee_id  Int
-  customer_id  Int
-  vehicle_id   Int
-  order_date   DateTime @default(now())
-  active_order Int
-  order_hash   String
+  id                Int         @id @default(autoincrement())
+  orderHash         String      @unique @default(uuid())
+  customerId        Int
+  vehicleId         Int
+  advisorId         Int?        // employee that created/advises
+  technicianId      Int?        // employee assigned to repair
+  status            OrderStatus @default(CHECKED_IN)
+  
+  // Intake data
+  checkInMileage    Int?
+  fuelLevel         String?     // e.g. "1/4", "1/2", "Full"
+  complaints        String?     @db.Text
+  damagePhotos      String[]    // Array of URLs to R2/S3
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  completedAt       DateTime?
 
-  employee Employee            @relation(fields: [employee_id], references: [employee_id])
-  customer CustomerIdentifier  @relation(fields: [customer_id], references: [customer_id])
-  vehicle  CustomerVehicleInfo @relation(fields: [vehicle_id], references: [vehicle_id])
-
-  info     OrderInfo?
-  services OrderService[]
-  statuses OrderStatus[]
+  customer          Customer    @relation(fields: [customerId], references: [id])
+  vehicle           Vehicle     @relation(fields: [vehicleId], references: [id])
+  advisor           Employee?   @relation(fields: [advisorId], references: [id], name: "OrderAdvisor")
+  technician        Employee?   @relation(fields: [technicianId], references: [id], name: "OrderTechnician")
+  
+  items             JobItem[]
+  payments          Payment[]
 
   @@map("orders")
 }
 
-model OrderInfo {
-  order_info_id                 Int       @id @default(autoincrement())
-  order_id                      Int       @unique
-  order_total_price             Int
-  estimated_completion_date     DateTime? @default(now())
-  completion_date               DateTime?
-  additional_request            String?   @db.Text
-  notes_for_internal_use        String?   @db.Text
-  notes_for_customer            String?   @db.Text
-  additional_requests_completed Int
+model JobItem {
+  id              Int      @id @default(autoincrement())
+  orderId         Int
+  itemName        String
+  itemType        String   // "PART" or "LABOR"
+  quantity        Int      @default(1)
+  unitPrice       Float    @default(0.0)
+  isApproved      Boolean  @default(false)
+  technicianNotes String?  @db.Text
+  isCompleted     Boolean  @default(false)
+  
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  order Order @relation(fields: [order_id], references: [order_id])
-
-  @@map("order_info")
+  @@map("job_items")
 }
 
-model OrderService {
-  order_service_id  Int @id @default(autoincrement())
-  order_id          Int
-  service_id        Int
-  service_completed Int
+model Payment {
+  id              Int           @id @default(autoincrement())
+  orderId         Int
+  amount          Float
+  paymentMethod   PaymentMethod
+  referenceNumber String?
+  cashierId       Int?
+  createdAt       DateTime      @default(now())
+  
+  order           Order         @relation(fields: [orderId], references: [id])
 
-  order   Order         @relation(fields: [order_id], references: [order_id])
-  service CommonService @relation(fields: [service_id], references: [service_id])
-
-  @@map("order_services")
-}
-
-model OrderStatus {
-  order_status_id Int @id @default(autoincrement())
-  order_id        Int
-  order_status    Int
-
-  order Order @relation(fields: [order_id], references: [order_id])
-
-  @@map("order_status")
+  @@map("payments")
 }
 
 model Appointment {
@@ -185,7 +147,6 @@ model Appointment {
   email         String
   phone         String
   vehicleInfo   String?
-  serviceId     Int?
   preferredDate String
   preferredTime String
   message       String?  @db.Text
@@ -193,7 +154,14 @@ model Appointment {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  service       CommonService? @relation(fields: [serviceId], references: [service_id])
-
   @@map("appointments")
+}
+
+model CommonService {
+  id                  Int     @id @default(autoincrement())
+  name                String
+  description         String? @db.Text
+  defaultLaborPrice   Float   @default(0.0)
+
+  @@map("common_services")
 }
