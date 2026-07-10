@@ -21,16 +21,16 @@ export function Footer() {
             <p className="text-gray-400 text-sm mb-8 max-w-lg mx-auto">
               Get the latest news, updates, and special offers delivered directly to your inbox. We promise not to spam you.
             </p>
-            <form className="flex flex-col sm:flex-row gap-0 max-w-lg mx-auto h-12">
+            <form className="flex flex-col sm:flex-row items-center gap-3 max-w-lg mx-auto">
               <input
                 type="email"
                 placeholder="Email Address"
-                className="flex-1 bg-white text-gray-900 placeholder:text-gray-500 px-6 h-full rounded-l-md sm:rounded-r-none rounded-r-md focus:outline-none"
+                className="w-full sm:flex-1 bg-white text-gray-900 placeholder:text-gray-500 px-6 h-[42px] rounded-md focus:outline-none shadow-sm"
                 required
               />
               <button
                 type="submit"
-                className="bg-primary text-white font-bold px-8 h-full rounded-r-md sm:rounded-l-none rounded-l-md hover:bg-primary-dark transition-colors uppercase text-sm tracking-wider"
+                className="w-full sm:w-auto bg-primary text-white font-bold px-8 h-[42px] rounded-md hover:bg-primary-dark transition-colors uppercase text-sm tracking-wider shadow-sm"
               >
                 Subscribe
               </button>

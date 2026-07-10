@@ -31,7 +31,15 @@ export function LoginForm() {
     if (result.error) {
       setServerError(result.error);
     } else {
-      router.push("/admin"); // Or appropriate default route
+      if (result.role === "ADVISOR") {
+        router.push("/advisor/jobs");
+      } else if (result.role === "TECHNICIAN") {
+        router.push("/technician/jobs");
+      } else if (result.role === "CASHIER") {
+        router.push("/cashier/queue");
+      } else {
+        router.push("/admin"); 
+      }
       router.refresh();
     }
   };
@@ -49,7 +57,7 @@ export function LoginForm() {
           type="email" 
           placeholder="Email" 
           {...register("email")}
-          className={`w-full h-14 px-4 text-base border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+          className={`w-full h-14 px-4 text-base border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
         />
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
@@ -62,7 +70,7 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             placeholder="Password" 
             {...register("password")}
-            className={`w-full h-14 px-4 pr-12 text-base border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+            className={`w-full h-14 px-4 pr-12 text-base border border-gray-300 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
           />
           <button 
             type="button" 
