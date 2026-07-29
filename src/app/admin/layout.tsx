@@ -17,11 +17,11 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-foreground">
+    <div className="flex flex-col h-screen overflow-hidden bg-gray-50 text-foreground">
       <Header />
       
-      <div className="flex flex-1">
-        <aside className="w-64 bg-[#1b2032] text-white hidden md:block">
+      <div className="flex flex-1 overflow-hidden">
+        <aside className="w-64 bg-[#1b2032] text-white hidden md:block flex-shrink-0 h-full overflow-y-auto">
           <div className="py-6 px-6 border-b border-white/10">
             <h2 className="text-sm tracking-[0.2em] font-medium text-gray-400">ADMIN MENU</h2>
           </div>

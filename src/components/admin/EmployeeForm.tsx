@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createEmployee } from "@/lib/actions/employees";
+import { createEmployee, updateEmployee } from "@/lib/actions/employees";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -20,7 +20,18 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export function EmployeeForm() {
+interface EmployeeFormProps {
+  employeeId?: number;
+  initialData?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    role: string;
+  };
+}
+
+export function EmployeeForm({ employeeId, initialData }: EmployeeFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,7 +42,7 @@ export function EmployeeForm() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       role: "Employee",
     },
   });
@@ -40,10 +51,16 @@ export function EmployeeForm() {
     setIsSubmitting(true);
     setError(null);
 
-    const result = await createEmployee(data);
+    let result;
+    if (employeeId) {
+      if (!data.password) delete (data as any).password;
+      result = await updateEmployee(employeeId.toString(), data);
+    } else {
+      result = await createEmployee(data);
+    }
 
     if (!result.success) {
-      setError(result.error || "Failed to create employee.");
+      setError(result.error || `Failed to ${employeeId ? 'update' : 'create'} employee.`);
       setIsSubmitting(false);
     } else {
       router.push("/admin/employees");
@@ -126,7 +143,7 @@ export function EmployeeForm() {
           disabled={isSubmitting}
           className="bg-primary hover:bg-[#c90a07] text-white px-8 py-6 rounded-none font-bold text-[14px] uppercase tracking-wider"
         >
-          {isSubmitting ? "ADDING..." : "ADD EMPLOYEE"}
+          {isSubmitting ? "SAVING..." : employeeId ? "UPDATE EMPLOYEE" : "ADD EMPLOYEE"}
         </Button>
       </div>
     </form>
