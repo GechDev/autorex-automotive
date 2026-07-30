@@ -3,8 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { EmployeeForm } from "@/components/admin/EmployeeForm";
 import { notFound } from "next/navigation";
 
-export default async function EditEmployeePage({ params }: { params: { id: string } }) {
-  const employeeId = parseInt(params.id);
+export default async function EditEmployeePage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const employeeId = parseInt(resolvedParams.id);
   if (isNaN(employeeId)) return notFound();
 
   const employee = await prisma.employee.findUnique({
