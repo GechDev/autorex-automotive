@@ -33,8 +33,8 @@ export default async function RootLayout({
   const session = await auth();
   
   return (
-    <html lang="en" className={`${poppins.variable} ${yantramanav.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+    <html lang="en" className={`${poppins.variable} ${yantramanav.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
         <AppSessionProvider session={session}>{children}</AppSessionProvider>
       </body>
     </html>
