@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Edit } from "lucide-react";
 import { DataTable, ColumnDef, formatDate } from "@/components/ui/data-table";
 import { DeleteEmployeeButton } from "@/components/admin/DeleteEmployeeButton";
-import { Employee } from "@prisma/client";
+import { Employee } from "@/generated/prisma";
 
 function ActiveBadge({ active }: { active: boolean }) {
   return active ? (

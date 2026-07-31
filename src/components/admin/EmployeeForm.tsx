@@ -28,7 +28,7 @@ interface EmployeeFormProps {
     firstName: string;
     lastName: string;
     phone: string;
-    role: string;
+    role: "ADMIN" | "ADVISOR" | "TECHNICIAN" | "CASHIER";
   };
 }
 

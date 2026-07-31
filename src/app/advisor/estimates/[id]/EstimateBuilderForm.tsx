@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Send, Save, DollarSign, PenTool, Wrench, Loader2 } from "lucide-react";
 import { updateEstimate } from "@/app/actions/advisor";
 import { sendSMS } from "@/app/actions/sms";
+import { sendEmail } from "@/app/actions/email";
 import toast from "react-hot-toast";
 
 type JobItem = {

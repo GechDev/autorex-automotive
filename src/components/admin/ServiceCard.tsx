@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { CommonService } from "@prisma/client";
+import { CommonService } from "@/generated/prisma";
 
 export function ServiceCard({ service, tableMode = false }: { service: CommonService; tableMode?: boolean }) {
   const [isEditing, setIsEditing] = useState(false);

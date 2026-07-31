@@ -4,7 +4,7 @@ import React from "react";
 import { Edit, Trash2 } from "lucide-react";
 import { DataTable, ColumnDef } from "@/components/ui/data-table";
 import { ServiceCard } from "@/components/admin/ServiceCard";
-import { CommonService } from "@prisma/client";
+import { CommonService } from "@/generated/prisma";
 
 export function ServicesTable({ services }: { services: CommonService[] }) {
   const columns: ColumnDef<CommonService>[] = [

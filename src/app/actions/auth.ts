@@ -49,7 +49,7 @@ export async function registerAction(data: RegisterInput) {
     const email = validatedData.email.toLowerCase();
 
     const existingEmployee = await prisma.employee.findUnique({
-      where: { employee_email: email },
+      where: { email: email },
     });
 
     if (existingEmployee) {
@@ -58,40 +58,17 @@ export async function registerAction(data: RegisterInput) {
 
     const passwordHash = await bcrypt.hash(validatedData.password, 12);
 
-    let employeeRole = await prisma.companyRole.findUnique({
-      where: { company_role_name: "Customer" }
-    });
-
-    if (!employeeRole) {
-      employeeRole = await prisma.companyRole.create({
-        data: { company_role_name: "Customer" }
-      });
-    }
-
     const [firstName, ...lastNameParts] = validatedData.name.split(" ");
     const lastName = lastNameParts.join(" ") || "";
 
     await prisma.employee.create({
       data: {
-        employee_email: email,
-        active_employee: 1,
-        info: {
-          create: {
-            employee_first_name: firstName,
-            employee_last_name: lastName,
-            employee_phone: "",
-          }
-        },
-        pass: {
-          create: {
-            employee_password_hashed: passwordHash,
-          }
-        },
-        roles: {
-          create: {
-            company_role_id: employeeRole.company_role_id,
-          }
-        }
+        email: email,
+        passwordHash: passwordHash,
+        firstName: firstName,
+        lastName: lastName,
+        role: "CASHIER",
+        isActive: true,
       },
     });
 
